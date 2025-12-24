@@ -1,37 +1,13 @@
-// Toggle mobile menu
-const hamburger = document.getElementById('hamburger');
-const navList = document.getElementById('nav-list');
-
-if (hamburger && navList) {
-    hamburger.addEventListener('click', () => {
-        navList.classList.toggle('active');
-        const isExpanded = navList.classList.contains('active');
-        hamburger.setAttribute('aria-expanded', isExpanded);
-    });
-}
-
-// Toggle dropdown on mobile
-const dropDown = document.querySelector('.drop-down');
-const dropContent = document.querySelector('.dropdown-content');
-
-if (dropDown && dropContent) {
-    dropDown.addEventListener('click', (e) => {
-        if (window.innerWidth <= 768) {
+// Add this to your navigation or user profile section
+function setupLogout() {
+    const logoutBtn = document.getElementById('logout-btn'); // if you have a logout button
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            dropContent.classList.toggle('active');
-        }
-    });
+            logout();
+        });
+    }
 }
 
-// Highlight active link
-const currentPath = window.location.pathname.split('/').pop();
-const links = document.querySelectorAll('.nav-list a');
-
-links.forEach(link => {
-    if (link.getAttribute('href') === currentPath) {
-        link.classList.add('active');
-    }
-});
-
-// Note: Authentication logic removed as Firebase is not integrated and elements don't exist in this page.
-// If authentication is needed, integrate Firebase and add corresponding HTML elements.
+// Call this function after DOM loads
+document.addEventListener('DOMContentLoaded', setupLogout);
