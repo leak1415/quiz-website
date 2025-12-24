@@ -20,6 +20,14 @@ body {
     background-color: #f5f7fb;
     color: var(--dark-color);
 }
+#leaderboardPage{
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 20px 40px;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
 #leaderboardPage h2 {
     margin-bottom: 30px;
     font-size: 2.4em;
