@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Test your knowledge with interactive quizzes on HTML & CSS, JavaScript, and General IT. Challenge yourself and climb the leaderboard!">
+    <meta name="description"
+        content="Test your knowledge with interactive quizzes on HTML & CSS, JavaScript, and General IT. Challenge yourself and climb the leaderboard!">
     <title>Quiz Website - Test Your IT Knowledge</title>
     <link rel="stylesheet" href="./css/home.css">
+    <link rel="stylesheet" href="./css/footer.css">
 </head>
 
 <body>
@@ -46,8 +48,9 @@
     <section class="hero">
         <div class="hero-content">
             <h1 class="hero-title">Welcome to Quizzy</h1>
-            <p class="hero-subtitle">Challenge your knowledge with fun quizzes on programming, IT fundamentals, and technology!</p>
-            <a href="#guest-home" class="btn btn-hero">Get Started</a>
+            <p class="hero-subtitle">Challenge your knowledge with fun quizzes on programming, IT fundamentals, and
+                technology!</p>
+            <a href="./auth/login.html" class="btn btn-hero">Get Started</a>
         </div>
     </section>
 
@@ -56,7 +59,14 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Quiz Website</h3>
-                <p>Test your knowledge with interactive quizzes on HTML & CSS, JavaScript, and General IT.</p>
+                <p>Test your knowledge with interactive quizzes on HTML & CSS, JavaScript, and General IT. Challenge
+                    yourself and climb the leaderboard!</p>
+                <div class="social-links">
+                    <a href="#" aria-label="GitHub"><i class="fab fa-github">GH</i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin">LI</i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter">TW</i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook">FB</i></a>
+                </div>
             </div>
             <div class="footer-section">
                 <h3>Quick Links</h3>
@@ -71,12 +81,23 @@
                 </ul>
             </div>
             <div class="footer-section">
-                <h3>Connect</h3>
-                <p>Follow us on social media for updates and tips!</p>
-                <div class="social-links">
-                    <a href="#" aria-label="GitHub">GitHub</a>
-                    <a href="#" aria-label="LinkedIn">LinkedIn</a>
-                </div>
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Tutorials</a></li>
+                    <li><a href="#">Documentation</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Subscribe to get updates and quiz tips</p>
+                <form class="newsletter-form">
+                    <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+                    <button type="submit" class="newsletter-btn">Subscribe</button>
+                </form>
             </div>
         </div>
         <div class="footer-bottom">
