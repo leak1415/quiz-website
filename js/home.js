@@ -22,18 +22,31 @@ function logout() {
 
 document.addEventListener('DOMContentLoaded', function () {
     // Check if user is logged in when home page loads
-    if (!isLoggedIn()) {
-        // Redirect to login if not authenticated
-        window.location.href = 'auth/login.html';
-        return;
-    }
+    updateAuthUI();
 
     // Display user info if logged in
     const userData = getUserData();
     if (userData) {
+        // Show dashboard section for logged-in users
+        const dashboardSection = document.getElementById('dashboard-section');
+        if (dashboardSection) {
+            dashboardSection.style.display = 'block';
+        }
+
+        // Update welcome message
         const userGreetingElement = document.getElementById('userGreeting');
         if (userGreetingElement) {
-            userGreetingElement.textContent = `Welcome, ${userData.fullName || userData.email}!`;
+            userGreetingElement.textContent = `Welcome back! ${userData.fullName || userData.email} is logged in.`;
+        }
+
+        // Update dashboard content
+        updateDashboardContent(userData);
+    } else {
+        // Show login button if not logged in
+        const ctaButton = document.getElementById('cta-button');
+        if (ctaButton) {
+            ctaButton.textContent = 'Sign In to Continue';
+            ctaButton.href = 'auth/login.html';
         }
     }
 
@@ -46,6 +59,97 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+// Update UI based on authentication status
+function updateAuthUI() {
+    const authSection = document.getElementById('auth-section');
+    if (!authSection) return;
+
+    if (isLoggedIn()) {
+        const userData = getUserData();
+        const userMenu = `
+            <div class="dropdown">
+                <button class="dropbtn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    ${userData?.fullName || userData?.email || 'User'}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
+                    <li><a class="dropdown-item" href="results.html"><i class="fas fa-trophy me-2"></i>My Results</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item logout-btn" href="#" data-logout><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
+            </div>
+        `;
+        authSection.innerHTML = userMenu;
+    } else {
+        authSection.innerHTML = '<a href="auth/login.html">Login</a>';
+    }
+}
+
+// Update dashboard content with user stats
+function updateDashboardContent(userData) {
+    // For now, we'll use placeholder data. In a real application, this would come from the server or local storage
+    document.getElementById('quizzes-taken').textContent = '5';
+    document.getElementById('success-rate').textContent = '87%';
+    document.getElementById('ranking').textContent = '#12';
+    document.getElementById('avg-score').textContent = '8.4';
+
+    // Update recent activity
+    const recentActivity = document.getElementById('recent-activity');
+    if (recentActivity) {
+        recentActivity.innerHTML = `
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    JavaScript Quiz
+                </div>
+                <span class="badge bg-primary rounded-pill">85%</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    HTML & CSS Quiz
+                </div>
+                <span class="badge bg-primary rounded-pill">92%</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-clock text-warning me-2"></i>
+                    Started: General IT Quiz
+                </div>
+                <span class="badge bg-secondary rounded-pill">In Progress</span>
+            </li>
+        `;
+    }
+
+    // Update continue learning section
+    const continueLearning = document.getElementById('continue-learning');
+    if (continueLearning) {
+        continueLearning.innerHTML = `
+            <a href="quiz.html" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Complete: General IT Quiz</h6>
+                    <small>50%</small>
+                </div>
+                <p class="mb-1">Continue where you left off</p>
+            </a>
+            <a href="quiz.html" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Advanced JavaScript Quiz</h6>
+                    <small>New</small>
+                </div>
+                <p class="mb-1">Challenge yourself with advanced concepts</p>
+            </a>
+            <a href="quiz.html" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Web Security Fundamentals</h6>
+                    <small>Recommended</small>
+                </div>
+                <p class="mb-1">Learn about security best practices</p>
+            </a>
+        `;
+    }
+}
 
 // Toggle mobile menu
 const hamburger = document.getElementById('hamburger');
@@ -74,7 +178,7 @@ if (dropDown && dropContent) {
 
 // Highlight active link
 const currentPath = window.location.pathname.split('/').pop();
-const links = document.querySelectorAll('.nav-list a');
+const links = document.querySelectorAll('.nav-list .nav-link');
 
 links.forEach(link => {
     if (link.getAttribute('href') === currentPath) {
@@ -99,6 +203,3 @@ function refreshSession() {
         }
     }
 }
-
-// Refresh session every 30 minutes
-setInterval(refreshSession, 30 * 60 * 1000);

@@ -94,7 +94,7 @@ footer {
 
 .newsletter-input {
     flex: 1;
-    padding: 10px 15px;
+    padding: 10px 0px 10px 10px;
     border: none;
     border-radius: 4px 0 0 4px;
     background: rgba(255, 255, 255, 0.1);
@@ -110,7 +110,7 @@ footer {
     background: #00ffea;
     color: #000;
     border: none;
-    padding: 10px 15px;
+    padding: 10px 10px;
     border-radius: 0 4px 4px 0;
     cursor: pointer;
     transition: background 0.3s ease;
