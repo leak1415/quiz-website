@@ -357,3 +357,42 @@ footer {
         justify-content: center;
     }
 }
+
+@media (max-width: 768px) {
+    .navbar .nav-list {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .hamburger {
+        display: block;
+    }
+    
+    .nav-list {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        flex-direction: column;
+        padding: 20px;
+        z-index: 1000;
+    }
+    
+    .nav-list.active {
+        display: flex;
+    }
+    
+    .hero-content {
+        padding: 20px;
+    }
+    
+    .hero-title {
+        font-size: 32px;
+    }
+    
+    .hero-subtitle {
+        font-size: 16px;
+    }
+}

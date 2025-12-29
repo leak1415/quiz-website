@@ -38,102 +38,61 @@
         <a href="profile.html">Profile</a>
       </li>
     </ul>
-  </nav>
-  <div class="container">
-    <div class="start-screen hide">
-      <h1 class="heading">Quiz</h1>
-      <div class="settings">
-        <label for="num-questions">Number of questions</label>
-        <select name="" id="numquestions">
-          <option value="none">--------------------------------------------------------------------</option>
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="15">15</option>
-          <option value="20">20</option>
-          <option value="25">25</option>
-          <option value="30">30</option>
-        </select>
-
-        <label for="category">select category</label>
-        <select name="" id="category">
-          <option value="none">--------------------------------------------------------------------</option>
-          <option value="html">HTML</option>
-          <option value="javascript">JAVASCRIPt</option>
-          <option value="database">DATA BASE</option>
-          <option value="php">PHP</option>
-          <option value="css">CSS</option>
-        </select>
-
-        <label for="difficulty">select difficulty</label>
-        <select name="" id="difficulty">
-          <option value="none">--------------------------------------------------------------------</option>
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
-        </select>
-
-        <label for="time">select time per question</label>
-        <select name="" id="time">
-          <option value="none">--------------------------------------------------------------------</option>
-          <option value="10 seconds">10 seconds</option>
-          <option value="15 seconds">15 seconds</option>
-          <option value="20 seconds">20 seconds</option>
-          <option value="25 seconds">25 seconds</option>
-          <option value="30 seconds">30 seconds</option>
-        </select>
-      </div>
-      <button class="btn" id="start-btn">Start Quiz</button>
+  </nav> 
+  <!-- Navbar -->
+  <!-- <nav class="navbar">
+    <div class="logo">  
+      <svg xmlns="http://www.w3.org/2000/svg" height="28" width="28" fill="#ffffff" viewBox="0 0 24 24">
+        <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+      </svg>
+      <span>CodeWhiz Quiz</span>
     </div>
-    <div class="quiz hide">
-      <div class="timer">
-        <div class="progress">
-          <div class="progress-bar"></div>
-          <span class="progress-text">50</span>
-        </div>
-      </div>
-      <div class="question-wrapper">
-        <div class="number">
-          Question <span class="current">1</span><span class="total">/10</span>
-        </div>
-        <div class="question">This is a Question</div>
-        <div class="answer-wrapper">
-          <div class="answer selected">
-            <span class="text">answer</span>
-            <span class="checkbox">
-              <span class="icon">✔</span>
-            </span>
-          </div>
-          <div class="answer correct">
-            <span class="text">answer</span>
-            <span class="checkbox">
-              <span class="icon">✔</span>
-            </span>
-          </div>
+    <div class="nav-buttons">
+      <button id="theme-toggle" class="btn small">🌞 Light Mode</button>
+      <button id="fullscreen-btn" class="btn small">⛶ Fullscreen</button>
+    </div>
+  </nav> -->
 
-           <div class="answer wrong">
-            <span class="text">answer</span>
-            <span class="checkbox">
-              <span class="icon">✔</span>
-            </span>
-          </div>
-        </div>
-        <button class="btn submit" disabled>Submit</button>
-        <button class="btn next">Next</button>
+  <!-- App Container -->
+  <div class="app-container">
+    <!-- Celebration Overlay -->
+    <div id="celebration-overlay"></div>
+
+    <!-- Instructions Screen -->
+    <section id="instructions" class="screen active">
+      <h1>Welcome to CodeWhiz Quiz</h1>
+      <p>This quiz includes 5 questions. You have 20 seconds per question. Good luck!</p>
+      <button id="start-btn" class="btn primary">Start Quiz</button>
+    </section>
+
+    <!-- Quiz Screen -->
+    <section id="quiz" class="screen">
+      <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar">0%</div>
       </div>
-    </div>
-    <div class="end-screen">
-      <h1 class="heading">Quiz</h1>
-      <div class="score">
-      <span class="score-text">Yor Score:</span>
+      <div class="quiz-header">
+        <h2 id="question-title">Question title</h2>
+        <div id="timer">⏱ <span id="time-left">20</span>s</div>
       </div>
-      <div>
-        <span class="final-score">0</span>
-        <span class="total-score">/10</span>
-      </div>
-    </div>
-    <button class="btn restart">Restart Quiz</button>
+      <form id="quiz-form"></form>
+      <button id="next-btn" class="btn secondary">Next</button>
+    </section>
+
+    <!-- Result Screen -->
+    <section id="result" class="screen">
+      <h2>Quiz Complete!</h2>
+      <p id="final-score"></p>
+      <div id="celebration-message"></div>
+      <button id="restart-btn" class="btn primary">Restart</button>
+    </section>
   </div>
-  <script src="script.js"></script>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 Quiz Website. All rights reserved.</p>
+  </footer>
+  
+  <script src="../js/quiz.js"></script>
 </body>
 
 </html>
