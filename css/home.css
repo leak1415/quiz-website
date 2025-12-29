@@ -1,6 +1,6 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    /* background: linear-gradient(135deg, #03fed0, #0230ff); */
     min-height: 100vh;
     margin: 0;
     color: #fff;
@@ -11,7 +11,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #00ffd0, #002efc);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 0 0 10px 10px;
 }
@@ -164,6 +164,7 @@ body {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -171,17 +172,19 @@ body {
 }
 
 .hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 80vh;
+    background: linear-gradient(135deg, #01d6af, #0a33ec);
     padding: 100px 20px;
     text-align: center;
     color: #fff;
 }
 
 .hero-title {
+    padding-top:30px;
     font-size: 3rem;
     font-weight: bold;
     margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero-subtitle {
@@ -198,15 +201,141 @@ body {
     border-radius: 50px;
     font-weight: bold;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,255,234,0.4);
+    box-shadow: 0 4px 15px rgba(0, 255, 234, 0.4);
 }
 
 .btn-hero:hover {
     background: #00d4c0;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,255,234,0.6);
+    box-shadow: 0 6px 20px rgba(0, 255, 234, 0.6);
 }
 
+/* Dashboard section styling */
+.dashboard {
+    background: linear-gradient(135deg, #0a0a1a, #1a1a2e);
+    color: #fff;
+}
+
+.dashboard .card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.dashboard .card .display-4 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: #00ffea;
+}
+
+.dashboard .card .card-title {
+    color: #00ffea;
+    font-weight: 600;
+}
+
+/* Featured quizzes section styling */
+#featured-quizzes {
+    background: linear-gradient(135deg, #f0f9ff, #e6f7ff);
+    color: #333;
+}
+
+#featured-quizzes .card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    background: #fff;
+    color: #333;
+}
+
+#featured-quizzes .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+#featured-quizzes .card .card-body {
+    padding: 25px;
+}
+
+#featured-quizzes .card .btn {
+    background: linear-gradient(135deg, #00ffd0, #002efc);
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+#featured-quizzes .card .btn:hover {
+    background: linear-gradient(135deg, #00d4c0, #0020d4);
+    transform: scale(1.05);
+}
+
+/* Testimonials section styling */
+.testimonials {
+    background: #fff;
+    color: #333;
+}
+
+.testimonials .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.testimonials .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.testimonials .card .card-body {
+    padding: 25px;
+}
+
+/* Dropdown menu for user profile */
+.dropdown-toggle::after {
+    margin-left: 0.5em;
+}
+
+.dropdown-menu {
+    background-color: #fff;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+}
+
+.dropdown-item {
+    color: #333;
+    padding: 10px 20px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f9ff;
+    color: #002efc;
+}
+
+.dropdown-item i {
+    width: 20px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
     .hamburger {
         display: block;
@@ -262,99 +391,14 @@ body {
     .hero-subtitle {
         font-size: 1.2rem;
     }
-}
 
-/* Footer Styles */
-footer {
-    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%);
-    color: #fff;
-    padding: 40px 20px 20px;
-    margin-top: auto;
-}
-
-.footer-content {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.footer-section {
-    flex: 1;
-    min-width: 200px;
-    margin-bottom: 20px;
-}
-
-.footer-section h3 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    color: #00ffea;
-}
-
-.footer-section p {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    opacity: 0.8;
-}
-
-.footer-section ul {
-    list-style: none;
-    padding: 0;
-}
-
-.footer-section ul li {
-    margin-bottom: 8px;
-}
-
-.footer-section ul li a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.3s ease;
-}
-
-.footer-section ul li a:hover {
-    color: #ffd700;
-}
-
-.social-links {
-    display: flex;
-    gap: 15px;
-}
-
-.social-links a {
-    color: #00ffea;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
-
-.social-links a:hover {
-    color: #ffd700;
-}
-
-.footer-bottom {
-    text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 20px;
-    margin-top: 20px;
-    font-size: 0.8rem;
-    opacity: 0.7;
-}
-
-@media (max-width: 768px) {
-    .footer-content {
-        flex-direction: column;
-        text-align: center;
+    /* Adjust dashboard cards for mobile */
+    .dashboard .card {
+        margin-bottom: 15px;
     }
 
-    .footer-section {
-        margin-bottom: 30px;
-    }
-
-    .social-links {
-        justify-content: center;
+    .dashboard .card .display-4 {
+        font-size: 2rem;
     }
 }
 

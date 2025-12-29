@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/leaderboard.css" />
+    <title>Quiz</title>
+  </head>
+  <body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+      <div class="logo">
+        <img
+          class="img-logo"
+          src="../images/logo.png"
+          alt="Quiz Website Logo"
+          loading="lazy"
+        />
+        <p class="name-web">Quiz Website</p>
+      </div>
+      <button
+        id="hamburger"
+        class="hamburger"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+      >
+        ☰
+      </button>
+      <ul class="nav-list" id="nav-list">
+        <li>
+          <a href="../index.html">Home</a>
+        </li>
+        <li>
+          <a href="quiz.html">Quiz</a>
+        </li>
+        <li>
+          <a href="leaderBoard.html">Leaderboard</a>
+        </li>
+        <li>
+          <a href="results.html">Results</a>
+        </li>
+        <div class="drop-down">
+          <button class="dropbtn">Resources</button>
+          <div class="dropdown-content">
+            <a href="aboutUs.html">About Us</a>
+            <a href="contact.html">Contact Us</a>
+          </div>
+        </div>
+        <li>
+          <a href="profile.html">Profile</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="" id="leaderboardPage">
+      <h2>Leaderboard</h2>
+
+      <!-- Controls for Filter, Sort, and Clear -->
+      <div class="controls">
+        <div class="control-group">
+          <label for="categoryFilter">Filter by Category:</label>
+          <select id="categoryFilter" class="control-group select">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <div>
+            <label>Sort by:</label>
+            <button id="sortScoreBtn" class="btn">Score (High to Low)</button>
+            <button id="sortNameBtn" class="btn">By Name</button>
+            <button id="sortDateBtn" class="btn">By Date</button>
+          </div>
+          <div class="control-group">
+            <button id="clearBtn" class="btn danger">Clear All Data</button>
+          </div>
+        </div>
+      </div>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Score</th>
+            <th>Category</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="allTimeLeaderboardBody">
+          <!-- Leaderboard data will be loaded dynamically -->
+          <tr>
+            <td colspan="5">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <script src="../js/leaderBoard.js"></script>
+  </body>
+</html>
