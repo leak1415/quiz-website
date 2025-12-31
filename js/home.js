@@ -62,22 +62,45 @@ function updateAuthUI() {
 
     if (isLoggedIn()) {
         const userData = getUserData();
+
+        // Determine the correct path prefix based on current page location
+        const currentPath = window.location.pathname;
+        let pathPrefix = '';
+
+        if (currentPath.includes('/pages/')) {
+            pathPrefix = '../'; // If we're in the pages directory, go up one level
+        } else if (currentPath.includes('/auth/')) {
+            pathPrefix = '../'; // If we're in the auth directory, go up one level
+        } else {
+            pathPrefix = './'; // If we're in root, stay at current level
+        }
+
         const userMenu = `
             <div class="dropdown">
                 <button class="dropbtn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     ${userData?.fullName || userData?.email || 'User'}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="pages/profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
-                    <li><a class="dropdown-item" href="results.html"><i class="fas fa-trophy me-2"></i>My Results</a></li>
+                    <li><a class="dropdown-item" href="${pathPrefix}pages/profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
+                    <li><a class="dropdown-item" href="${pathPrefix}pages/results.html"><i class="fas fa-trophy me-2"></i>My Results</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="auth/logout.html"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    <li><a class="dropdown-item" href="${pathPrefix}auth/logout.html"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                 </ul>
             </div>
         `;
         authSection.innerHTML = userMenu;
     } else {
-        authSection.innerHTML = '<a href="auth/login.html">Login</a>';
+        // Determine the correct path for login based on current location
+        const currentPath = window.location.pathname;
+        let loginPath = './auth/login.html';
+
+        if (currentPath.includes('/pages/')) {
+            loginPath = '../auth/login.html';
+        } else if (currentPath.includes('/auth/')) {
+            loginPath = './login.html'; // If already in auth directory
+        }
+
+        authSection.innerHTML = `<a href="${loginPath}">Login</a>`;
     }
 }
 
@@ -88,17 +111,17 @@ function updateDashboardContent(userData) {
     if (quizzesTakenElement) {
         quizzesTakenElement.textContent = '5';
     }
-    
+
     const successRateElement = document.getElementById('success-rate');
     if (successRateElement) {
         successRateElement.textContent = '87%';
     }
-    
+
     const rankingElement = document.getElementById('ranking');
     if (rankingElement) {
         rankingElement.textContent = '#12';
     }
-    
+
     const avgScoreElement = document.getElementById('avg-score');
     if (avgScoreElement) {
         avgScoreElement.textContent = '8.4';
