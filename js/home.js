@@ -88,17 +88,17 @@ function updateDashboardContent(userData) {
     if (quizzesTakenElement) {
         quizzesTakenElement.textContent = '5';
     }
-
+    
     const successRateElement = document.getElementById('success-rate');
     if (successRateElement) {
         successRateElement.textContent = '87%';
     }
-
+    
     const rankingElement = document.getElementById('ranking');
     if (rankingElement) {
         rankingElement.textContent = '#12';
     }
-
+    
     const avgScoreElement = document.getElementById('avg-score');
     if (avgScoreElement) {
         avgScoreElement.textContent = '8.4';
