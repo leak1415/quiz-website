@@ -25,25 +25,25 @@ document.addEventListener('DOMContentLoaded', function () {
     // Check if user is logged in when home page loads
     updateAuthUI();
 
-    // Display user info if logged in
+    // Only update dashboard content if on the home page (where dashboard elements exist)
     const userData = getUserData();
-    if (userData) {
+    if (userData && document.getElementById('dashboard-section')) {
         // Show dashboard section for logged-in users
         const dashboardSection = document.getElementById('dashboard-section');
         if (dashboardSection) {
             dashboardSection.style.display = 'block';
         }
 
-        // Update welcome message
+        // Update welcome message if element exists
         const userGreetingElement = document.getElementById('userGreeting');
         if (userGreetingElement) {
             userGreetingElement.textContent = `Welcome back! ${userData.fullName || userData.email} is logged in.`;
         }
 
-        // Update dashboard content
+        // Update dashboard content if elements exist
         updateDashboardContent(userData);
-    } else {
-        // Show login button if not logged in
+    } else if (!userData && document.getElementById('cta-button')) {
+        // Show login button if not logged in and on home page
         const ctaButton = document.getElementById('cta-button');
         if (ctaButton) {
             ctaButton.textContent = 'Sign In to Continue';
@@ -68,7 +68,7 @@ function updateAuthUI() {
                     ${userData?.fullName || userData?.email || 'User'}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
+                    <li><a class="dropdown-item" href="pages/profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
                     <li><a class="dropdown-item" href="results.html"><i class="fas fa-trophy me-2"></i>My Results</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="auth/logout.html"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
@@ -84,10 +84,25 @@ function updateAuthUI() {
 // Update dashboard content with user stats
 function updateDashboardContent(userData) {
     // For now, we'll use placeholder data. In a real application, this would come from the server or local storage
-    document.getElementById('quizzes-taken').textContent = '5';
-    document.getElementById('success-rate').textContent = '87%';
-    document.getElementById('ranking').textContent = '#12';
-    document.getElementById('avg-score').textContent = '8.4';
+    const quizzesTakenElement = document.getElementById('quizzes-taken');
+    if (quizzesTakenElement) {
+        quizzesTakenElement.textContent = '5';
+    }
+    
+    const successRateElement = document.getElementById('success-rate');
+    if (successRateElement) {
+        successRateElement.textContent = '87%';
+    }
+    
+    const rankingElement = document.getElementById('ranking');
+    if (rankingElement) {
+        rankingElement.textContent = '#12';
+    }
+    
+    const avgScoreElement = document.getElementById('avg-score');
+    if (avgScoreElement) {
+        avgScoreElement.textContent = '8.4';
+    }
 
     // Update recent activity
     const recentActivity = document.getElementById('recent-activity');
