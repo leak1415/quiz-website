@@ -68,7 +68,7 @@ function updateAuthUI() {
                     ${userData?.fullName || userData?.email || 'User'}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
+                    <li><a class="dropdown-item" href="pages/profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
                     <li><a class="dropdown-item" href="results.html"><i class="fas fa-trophy me-2"></i>My Results</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="auth/logout.html"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
