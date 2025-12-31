@@ -5,10 +5,10 @@
 }
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background:white;
+    /* background:white; */
     min-height: 100vh;
     margin: 0;
-    /* color: #fff;     */
+  
     
    
 }
@@ -201,6 +201,7 @@ body {
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0,0,0,0.05);
   position: relative;
+  color: black;
 }
 
 .screen {

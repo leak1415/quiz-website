@@ -36,139 +36,136 @@ const questions = [
   },
 ];
 
-let current = 0,
-  score = 0,
-  timeLeft = 20,
-  timer;
-const $ = (id) => document.getElementById(id);
+// ===== VARIABLES =====
+let currentQuestion = 0;
+let score = 0;
+let timeLeft = 20;
+let timer;
 
-$("start-btn").onclick = () => {
-  $("instructions").classList.remove("active");
-  $("quiz").classList.add("active");
+// shortcut for getElementById
+function get(id) {
+  return document.getElementById(id);
+}
+
+// ===== BUTTON EVENTS =====
+get("start-btn").onclick = function () {
+  get("instructions").classList.remove("active");
+  get("quiz").classList.add("active");
   loadQuestion();
 };
 
-$("next-btn").onclick = () => {
+get("next-btn").onclick = function () {
   clearInterval(timer);
   checkAnswer();
-  showFeedback(() => nextQuestion());
+  showFeedback(nextQuestion);
 };
 
-$("restart-btn").onclick = () => location.reload();
-
-$("theme-toggle").onclick = () => {
-  document.body.classList.toggle("dark");
-  $("theme-toggle").textContent = document.body.classList.contains("dark")
-    ? "🌙 Dark Mode"
-    : "🌞 Light Mode";
+get("restart-btn").onclick = function () {
+  location.reload();
 };
 
-$("fullscreen-btn").onclick = () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-    $("fullscreen-btn").textContent = "✖ Exit Fullscreen";
-  } else {
-    document.exitFullscreen();
-    $("fullscreen-btn").textContent = "⛶ Fullscreen";
-  }
-};
-
+// ===== LOAD QUESTION =====
 function loadQuestion() {
   timeLeft = 20;
-  $("time-left").textContent = timeLeft;
-  const q = questions[current];
-  $("question-title").textContent = `${current + 1}. ${q.question}`;
-  $("quiz-form").innerHTML = "";
+  get("time-left").textContent = timeLeft;
 
-  q.choices.forEach((choice, i) => {
+  const q = questions[currentQuestion];
+  get("question-title").textContent =
+    (currentQuestion + 1) + ". " + q.question;
+
+  get("quiz-form").innerHTML = "";
+
+  for (let i = 0; i < q.choices.length; i++) {
     const label = document.createElement("label");
-    label.style.display = "flex";
-    label.style.alignItems = "center";
-    label.style.gap = "10px";
 
     const input = document.createElement("input");
     input.type = "radio";
-    input.name = "question";
+    input.name = "answer";
     input.value = i;
+
     label.appendChild(input);
-    label.append(` ${choice}`);
-    $("quiz-form").appendChild(label);
-  });
+    label.append(" " + q.choices[i]);
+
+    get("quiz-form").appendChild(label);
+  }
 
   startTimer();
   updateProgress();
 }
 
+// ===== TIMER =====
 function startTimer() {
-  timer = setInterval(() => {
+  timer = setInterval(function () {
     timeLeft--;
-    $("time-left").textContent = timeLeft;
-    if (timeLeft <= 0) {
+    get("time-left").textContent = timeLeft;
+
+    if (timeLeft === 0) {
       clearInterval(timer);
       checkAnswer();
-      showFeedback(() => nextQuestion());
+      showFeedback(nextQuestion);
     }
   }, 1000);
 }
 
+// ===== CHECK ANSWER =====
 function checkAnswer() {
-  const selected = document.querySelector('input[name="question"]:checked');
-  const userAnswer = selected ? parseInt(selected.value) : null;
-  if (userAnswer !== null && userAnswer === questions[current].answer) {
-    score++;
+  const selected = document.querySelector(
+    'input[name="answer"]:checked'
+  );
+
+  if (selected) {
+    const userAnswer = Number(selected.value);
+    if (userAnswer === questions[currentQuestion].answer) {
+      score++;
+    }
   }
 }
 
+// ===== SHOW FEEDBACK =====
 function showFeedback(callback) {
-  const q = questions[current];
-  const correctIndex = q.answer;
-
+  const correctIndex = questions[currentQuestion].answer;
   const labels = document.querySelectorAll("#quiz-form label");
-  labels.forEach((label) => {
-    const input = label.querySelector("input");
-    const index = parseInt(input.value);
 
-    if (index === correctIndex) {
+  labels.forEach(function (label) {
+    const input = label.querySelector("input");
+    input.disabled = true;
+
+    if (Number(input.value) === correctIndex) {
       label.classList.add("correct");
     } else if (input.checked) {
       label.classList.add("incorrect");
     }
-    input.disabled = true;
   });
 
-  const correctDiv = document.createElement("div");
-  correctDiv.className = "correct-answer-popup";
-  correctDiv.innerHTML = `<p>✅ Correct answer: <strong>${q.choices[correctIndex]}</strong></p>`;
-  $("quiz-form").appendChild(correctDiv);
-
-  setTimeout(() => {
-    correctDiv.remove();
-    callback();
-  }, 1500);
+  setTimeout(callback, 1500);
 }
 
+// ===== NEXT QUESTION =====
 function nextQuestion() {
-  current++;
-  if (current < questions.length) {
+  currentQuestion++;
+
+  if (currentQuestion < questions.length) {
     loadQuestion();
   } else {
     showResult();
   }
 }
 
+// ===== PROGRESS BAR =====
 function updateProgress() {
-  const percent = ((current + 1) / questions.length) * 100;
-  $("progress-bar").style.width = `${percent}%`;
-  $("progress-bar").textContent = `${current + 1} / ${questions.length}`;
+  const progress =
+    ((currentQuestion + 1) / questions.length) * 100;
+
+  get("progress-bar").style.width = progress + "%";
+  get("progress-bar").textContent =
+    currentQuestion + 1 + " / " + questions.length;
 }
 
+// ===== RESULT =====
 function showResult() {
-  $("quiz").classList.remove("active");
-  $("result").classList.add("active");
-  $("final-score").textContent = `You scored ${score} out of ${questions.length}`;
+  get("quiz").classList.remove("active");
+  get("result").classList.add("active");
 
-  $("celebration-overlay").style.display = "flex";
-  $("celebration-overlay").textContent =
-    score >= 4 ? "🎉 Congratulations!" : "👍 Better Luck Next Time!";
-  setTimeout(() => $("celebration-overlay").style.display = "none", 3000);
+  get("final-score").textContent =
+    "You scored " + score + " out of " + questions.length;
 }
