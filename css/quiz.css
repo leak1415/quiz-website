@@ -8,7 +8,7 @@ body {
     background:white;
     min-height: 100vh;
     margin: 0;
-    color: #fff;    
+    /* color: #fff;     */
     
    
 }
@@ -69,7 +69,7 @@ body {
 .hamburger {
     display: none;
     background: none;
-    border: none;
+    /* border: none; */
     font-size: 24px;
     cursor: pointer;
     color: #fff;
@@ -85,8 +85,7 @@ body {
     position: relative;
     display: inline-block;
 }
-
-.dropbtn {
+.drop-down .dropbtn{
     background: none;
     border: none;
     color: #fff;
@@ -95,9 +94,18 @@ body {
     cursor: pointer;
     transition: color 0.3s ease;
 }
-
-.dropbtn:hover {
+.drop-down .dropbtn:hover{
     color: #ffd700;
+}
+
+.dropbtn {
+    background: none;
+    /* border: none; */
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
 }
 
 .dropdown-content {
@@ -176,54 +184,156 @@ body {
         transform: translateY(0);
     }
 }
-
-
-
-.container{
-    position: relative;
-    width: 30%;
-    background: linear-gradient(135deg, #74ebd5, #9face6);
-    padding: 20px;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
-    margin:40px auto auto auto ;
-
-    
+:root {
+  --bg-color: #fdfdfd;
+  --text-color: #111;
+  --primary-color: #4caf50;
+  --secondary-color: #2196f3;
+  --accent-color: #ff4081;
+  --card-bg: #ffffff;
 }
-.heading{
-  text-align: center;
-  font-size: 60px;
-  font-weight: 500;
-  color: white;
-  margin-bottom: 50px;  
+
+.app-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  position: relative;
 }
-label{
+
+.screen {
+  display: none;
+}
+
+.screen.active {
   display: block;
-  font-size: 12px;
-  margin-bottom:10px;
-  color:#000;
+  animation: fadeIn 0.4s ease-in-out;
 }
-select{
-  width: 100%;
-  padding: 10px;
-  text-transform: capitalize;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  background-color: #fff; 
-  color:#000;
-  font-size: 16px;
 
-} 
-.btn{
-    width: 100%;
-    padding: 16px;
-    background-color: #0c80ef;
-    border: none;
-    color: #fff;
-    font-size: 18px;
-    cursor: pointer;
-    transition: all 0.3s linear;
-    border-radius: 20px;
-    
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.primary {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.secondary {
+  background: var(--secondary-color);
+  color: #fff;
+}
+
+.small {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+}
+
+.progress-bar-container {
+  background: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 20px;
+  margin-bottom: 1rem;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--primary-color);
+  text-align: center;
+  color: white;
+  font-size: 0.8rem;
+  width: 0%;
+  transition: width 0.3s;
+}
+
+#quiz-form label {
+  display: block;
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  border-radius: 6px;
+  background: #f1f1f1;
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+
+body.dark #quiz-form label {
+  background: #2a2a2a;
+}
+
+#quiz-form label.correct {
+  border-color: green;
+}
+
+#quiz-form label.incorrect {
+  border-color: red;
+}
+
+.correct-answer-popup {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-left: 5px solid var(--primary-color);
+  background: #e7f9ec;
+  color: #222;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.footer {
+  margin-top: 3rem;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #777;
+  background: var(--card-bg);
+  border-top: 1px solid #ccc;
+}
+
+#celebration-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  color: var(--accent-color);
+  animation: fadeIn 1s ease-in-out;
+}
+
+body.dark #celebration-overlay {
+  background: rgba(18, 18, 18, 0.95);
+  color: var(--secondary-color);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 600px) {
+  .app-container {
+    padding: 1rem;
+  }
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
 }

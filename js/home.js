@@ -12,12 +12,13 @@ function getUserData() {
     return userData ? JSON.parse(userData) : null;
 }
 
+
 function logout() {
     localStorage.removeItem('quizApp_user');
     localStorage.removeItem('quizApp_loggedIn');
     sessionStorage.removeItem('quizApp_user');
     sessionStorage.removeItem('quizApp_loggedIn');
-    window.location.href = 'auth/login.html';
+    window.location.href = '../index.html';
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -50,14 +51,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Add logout functionality to any logout buttons
-    const logoutButtons = document.querySelectorAll('.logout-btn, [data-logout]');
-    logoutButtons.forEach(button => {
-        button.addEventListener('click', function (e) {
-            e.preventDefault();
-            logout();
-        });
-    });
+    // Remove the logout button event listener since we're now using direct links to the logout page
+    // The logout link in the dropdown now directly goes to auth/logout.html
 });
 
 // Update UI based on authentication status
@@ -76,7 +71,7 @@ function updateAuthUI() {
                     <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
                     <li><a class="dropdown-item" href="results.html"><i class="fas fa-trophy me-2"></i>My Results</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item logout-btn" href="#" data-logout><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    <li><a class="dropdown-item" href="auth/logout.html"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                 </ul>
             </div>
         `;
