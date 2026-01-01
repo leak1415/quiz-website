@@ -1,3 +1,6 @@
+/* Final style.css with border color feedback */
+
+
 *{
     margin: 0;
     padding: 0;
@@ -5,14 +8,12 @@
 }
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background:white;
+    /* background:white; */
     min-height: 100vh;
     margin: 0;
-    /* color: #fff;     */
+  
     
-   
 }
-
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -184,7 +185,9 @@ body {
         transform: translateY(0);
     }
 }
-:root {
+
+
+ :root {
   --bg-color: #fdfdfd;
   --text-color: #111;
   --primary-color: #4caf50;
@@ -192,7 +195,6 @@ body {
   --accent-color: #ff4081;
   --card-bg: #ffffff;
 }
-
 .app-container {
   max-width: 800px;
   margin: 2rem auto;
@@ -212,6 +214,63 @@ body {
   animation: fadeIn 0.4s ease-in-out;
 }
 
+.btn.large {
+  width: 100%;
+  padding: 1.2rem;
+  font-size: 1.2rem;
+  margin: 1rem 0;
+}
+
+.subject-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 2.5rem 0;
+}
+
+.subject-btn {
+  padding: 2.5rem 2rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.subject-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.9rem;
+  margin: 1.2rem 0;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.question-input {
+  margin-bottom: 1rem;
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .quiz-header {
   display: flex;
   justify-content: space-between;
@@ -220,11 +279,13 @@ body {
 }
 
 .btn {
-  padding: 0.6rem 1.5rem;
-  font-size: 1rem;
+  padding: 0.8rem 2rem;
+  font-size: 1.05rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
+  margin: 0.5rem;
+  transition: all 0.3s ease;
 }
 
 .primary {
@@ -262,12 +323,13 @@ body {
 
 #quiz-form label {
   display: block;
-  margin: 0.5rem 0;
-  padding: 0.75rem;
-  border-radius: 6px;
+  margin: 0.8rem 0;
+  padding: 1rem;
+  border-radius: 8px;
   background: #f1f1f1;
   border: 2px solid transparent;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, background 0.3s;
+  font-size: 1.05rem;
 }
 
 body.dark #quiz-form label {
