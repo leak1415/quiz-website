@@ -54,7 +54,12 @@ const quizzes = {
     },
     {
       question: "What does 'len()' do in Python?",
-      choices: ["Creates a list", "Returns length", "Deletes items", "Sorts items"],
+      choices: [
+        "Creates a list",
+        "Returns length",
+        "Deletes items",
+        "Sorts items",
+      ],
       answer: 1,
     },
     {
@@ -98,12 +103,22 @@ const quizzes = {
     },
     {
       question: "Who was the first President of USA?",
-      choices: ["Thomas Jefferson", "George Washington", "John Adams", "Benjamin Franklin"],
+      choices: [
+        "Thomas Jefferson",
+        "George Washington",
+        "John Adams",
+        "Benjamin Franklin",
+      ],
       answer: 1,
     },
     {
       question: "Which ancient wonder is still standing?",
-      choices: ["Colossus of Rhodes", "Great Pyramid", "Hanging Gardens", "Lighthouse of Alexandria"],
+      choices: [
+        "Colossus of Rhodes",
+        "Great Pyramid",
+        "Hanging Gardens",
+        "Lighthouse of Alexandria",
+      ],
       answer: 1,
     },
     {
@@ -113,14 +128,24 @@ const quizzes = {
     },
     {
       question: "Who discovered America?",
-      choices: ["Leif Erikson", "Christopher Columbus", "Ferdinand Magellan", "Vasco da Gama"],
+      choices: [
+        "Leif Erikson",
+        "Christopher Columbus",
+        "Ferdinand Magellan",
+        "Vasco da Gama",
+      ],
       answer: 1,
     },
   ],
   java: [
     {
       question: "What does JVM stand for?",
-      choices: ["Java Virtual Memory", "Java Virtual Machine", "Java Valid Module", "Java Value Manager"],
+      choices: [
+        "Java Virtual Memory",
+        "Java Virtual Machine",
+        "Java Valid Module",
+        "Java Value Manager",
+      ],
       answer: 1,
     },
     {
@@ -192,11 +217,31 @@ let current = 0,
   selectedSubject = "";
 
 const subjectInfo = {
-  web: { name: "Web Development", emoji: "🌐", description: "Test your knowledge on HTML, CSS, and JavaScript!" },
-  python: { name: "Python", emoji: "🐍", description: "Challenge yourself with Python programming questions!" },
-  math: { name: "Mathematics", emoji: "🔢", description: "Solve mathematical problems and challenges!" },
-  history: { name: "History", emoji: "📚", description: "Explore historical facts and events!" },
-  java: { name: "Java", emoji: "☕", description: "Master Java programming basics and concepts!" },
+  web: {
+    name: "Web Development",
+    emoji: "🌐",
+    description: "Test your knowledge on HTML, CSS, and JavaScript!",
+  },
+  python: {
+    name: "Python",
+    emoji: "🐍",
+    description: "Challenge yourself with Python programming questions!",
+  },
+  math: {
+    name: "Mathematics",
+    emoji: "🔢",
+    description: "Solve mathematical problems and challenges!",
+  },
+  history: {
+    name: "History",
+    emoji: "📚",
+    description: "Explore historical facts and events!",
+  },
+  java: {
+    name: "Java",
+    emoji: "☕",
+    description: "Master Java programming basics and concepts!",
+  },
 };
 
 const $ = (id) => document.getElementById(id);
@@ -241,7 +286,9 @@ document.querySelectorAll(".subject-btn").forEach((btn) => {
     customQuizMode = false;
     $("subject-title").textContent = `${info.name} Quiz`;
     $("subject-emoji").textContent = info.emoji;
-    $("quiz-description").textContent = `${info.description} This quiz includes ${questions.length} questions. You have 20 seconds per question. Good luck!`;
+    $(
+      "quiz-description"
+    ).textContent = `${info.description} This quiz includes ${questions.length} questions. You have 20 seconds per question. Good luck!`;
     $("subject-selection").classList.remove("active");
     $("instructions").classList.add("active");
   };
@@ -325,7 +372,9 @@ $("submit-custom-quiz-btn").onclick = () => {
   current = 0;
   score = 0;
   customQuizMode = true;
-  $("quiz-description").textContent = `Custom Quiz: ${title}. ${questions.length} questions, 20 seconds each. Good luck!`;
+  $(
+    "quiz-description"
+  ).textContent = `Custom Quiz: ${title}. ${questions.length} questions, 20 seconds each. Good luck!`;
   $("create-quiz").classList.remove("active");
   $("instructions").classList.add("active");
 };
@@ -359,14 +408,16 @@ function loadQuestion() {
   $("time-left").textContent = timeLeft;
   const q = questions[current];
   $("question-title").textContent = `${current + 1}. ${q.question}`;
-  
+
   // Display subject name in quiz
   if (selectedSubject && subjectInfo[selectedSubject]) {
-    $("current-subject").textContent = `${subjectInfo[selectedSubject].emoji} ${subjectInfo[selectedSubject].name}`;
+    $(
+      "current-subject"
+    ).textContent = `${subjectInfo[selectedSubject].emoji} ${subjectInfo[selectedSubject].name}`;
   } else if (customQuizMode) {
     $("current-subject").textContent = "📝 Custom Quiz";
   }
-  
+
   $("quiz-form").innerHTML = "";
 
   q.choices.forEach((choice, i) => {
@@ -451,13 +502,53 @@ function updateProgress() {
   $("progress-bar").textContent = `${current + 1} / ${questions.length}`;
 }
 
+function saveQuizResultToLeaderboard() {
+  const playerName = prompt("Enter your name:") || "Anonymous";
+  const category =
+    selectedSubject && subjectInfo[selectedSubject]
+      ? subjectInfo[selectedSubject].name
+      : customQuizMode
+      ? "Custom Quiz"
+      : "Unknown";
+
+  // Get unified app data
+  let appData = JSON.parse(localStorage.getItem("quizAppData")) || {
+    users: [],
+    leaderboard: [],
+    currentUser: null,
+    loggedIn: false,
+  };
+
+  // Create new entry
+  const newEntry = {
+    name: playerName,
+    score: score,
+    category: category,
+    totalQuestions: questions.length,
+    date: new Date().toISOString(),
+  };
+
+  // Add to leaderboard and sort
+  appData.leaderboard = appData.leaderboard || [];
+  appData.leaderboard.push(newEntry);
+  appData.leaderboard.sort((a, b) => b.score - a.score);
+
+  // Save back to unified storage
+  localStorage.setItem("quizAppData", JSON.stringify(appData));
+}
+
 function showResult() {
   $("quiz").classList.remove("active");
   $("result").classList.add("active");
-  $("final-score").textContent = `You scored ${score} out of ${questions.length}`;
+  $(
+    "final-score"
+  ).textContent = `You scored ${score} out of ${questions.length}`;
 
   $("celebration-overlay").style.display = "flex";
   $("celebration-overlay").textContent =
     score >= 4 ? "🎉 Congratulations!" : "👍 Better Luck Next Time!";
-  setTimeout(() => $("celebration-overlay").style.display = "none", 3000);
+  setTimeout(() => ($("celebration-overlay").style.display = "none"), 3000);
+
+  // Save result to leaderboard
+  saveQuizResultToLeaderboard();
 }

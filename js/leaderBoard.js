@@ -3,23 +3,37 @@ const leaderboardBody = document.getElementById("allTimeLeaderboardBody");
 let currentData = [];
 
 function getLeaderboardData() {
-  return JSON.parse(localStorage.getItem("leaderboard")) || [];
+  let appData = JSON.parse(localStorage.getItem("quizAppData")) || {
+    users: [],
+    leaderboard: [],
+    currentUser: null,
+    loggedIn: false,
+  };
+  return appData.leaderboard || [];
 }
 
 function saveLeaderboardData(data) {
-  localStorage.setItem("leaderboard", JSON.stringify(data));
+  let appData = JSON.parse(localStorage.getItem("quizAppData")) || {
+    users: [],
+    leaderboard: [],
+    currentUser: null,
+    loggedIn: false,
+  };
+  appData.leaderboard = data;
+  localStorage.setItem("quizAppData", JSON.stringify(appData));
 }
 
-// Load leaderboard data from localStorage or JSON file
+// Load leaderboard data from unified storage
 async function loadLeaderboard() {
   let data = getLeaderboardData();
 
-  if (data.length > 0) {
+  if (data && data.length > 0) {
     currentData = data;
     displayLeaderboard(currentData);
     return currentData;
   }
 
+  // If no data in unified storage, check for old leaderboard JSON file
   try {
     const response = await fetch("../data/leaderBoard.json");
     const fetched = await response.json();
@@ -28,7 +42,8 @@ async function loadLeaderboard() {
     displayLeaderboard(currentData);
     return currentData;
   } catch (err) {
-    console.error("Error loading leaderboard:", err);
+    // No data found, display empty leaderboard
+    currentData = [];
     displayLeaderboard([]);
     return [];
   }
@@ -85,7 +100,14 @@ function addLeaderboardEntry(name, score, category, date) {
 
 // Clear leaderboard data
 function clearLeaderboard() {
-  localStorage.removeItem("leaderboard");
+  let appData = JSON.parse(localStorage.getItem("quizAppData")) || {
+    users: [],
+    leaderboard: [],
+    currentUser: null,
+    loggedIn: false,
+  };
+  appData.leaderboard = [];
+  localStorage.setItem("quizAppData", JSON.stringify(appData));
   currentData = [];
   displayLeaderboard([]);
   populateCategoryFilter();
@@ -156,7 +178,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const sortScoreBtn = document.getElementById("sortScoreBtn");
   const sortNameBtn = document.getElementById("sortNameBtn");
   const sortDateBtn = document.getElementById("sortDateBtn");
-  const clearBtn = document.getElementById("clearBtn");
 
   if (categoryFilter) {
     categoryFilter.addEventListener("change", (e) =>
@@ -168,15 +189,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (sortNameBtn) sortNameBtn.addEventListener("click", sortByName);
   if (sortDateBtn) sortDateBtn.addEventListener("click", sortByDate);
 
-  if (clearBtn) {
-    clearBtn.addEventListener("click", () => {
-      if (
-        confirm(
-          "Are you sure you want to clear all leaderboard data? This action cannot be undone."
-        )
-      ) {
-        clearLeaderboard();
-      }
-    });
-  }
 });
