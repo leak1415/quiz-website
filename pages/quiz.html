@@ -2,138 +2,139 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz</title>
-  <link rel="stylesheet" href="../css/quiz.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link rel="stylesheet" href="../css/quiz.css">
 </head>
+
 <body>
-  <nav class="navbar" role="navigation" aria-label="Main navigation">
-    <div class="logo">
-      <img class="img-logo" src="../images/logo.png" alt="Quiz Website Logo" loading="lazy">
-      <p class="name-web">Quiz Website</p>
-    </div>
-    <button id="hamburger" class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
-    <ul class="nav-list" id="nav-list">
-      <li>
-        <a href="../index.html">Home</a>
-      </li>
-      <li>
-        <a href="quiz.html">Quiz</a>
-      </li>
-      <li>
-        <a href="leaderBoard.html">Leaderboard</a>
-      </li>
-      <li>
-        <a href="results.html">Results</a>
-      </li>
-      <div class="drop-down">
-        <button class="dropbtn">Resources</button>
-        <div class="dropdown-content">
-          <a href="aboutUs.html">About Us</a>
-          <a href="contact.html">Contact Us</a>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="logo">
+            <img class="img-logo" src="../images/logo.png" alt="Quiz Website Logo" loading="lazy">
+            <p class="name-web">Quiz Website</p>
         </div>
-      </div>
-      <li>
-        <a href="profile.html">Profile</a>
-      </li>
-    </ul>
-  </nav>
-  <div class="container">
-    <div class="start-screen hide">
-      <h1 class="heading">Quiz</h1>
-      <div class="settings">
-        <label for="num-questions">Number of questions</label>
-        <select name="" id="numquestions">
-          <option value="none">--------------------------------------------------------------------</option>
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="15">15</option>
-          <option value="20">20</option>
-          <option value="25">25</option>
-          <option value="30">30</option>
-        </select>
+        <button id="hamburger" class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
+        <ul class="nav-list" id="nav-list">
+            <li>
+                <a href="../index.html">Home</a>
+            </li>
+            <li>
+                <a href="quiz.html">Quiz</a>
+            </li>
+            <li>
+                <a href="leaderBoard.html">Leaderboard</a>
+            </li>
+            <li>
+                <a href="results.html">Results</a>
+            </li>
+            <div class="drop-down">
+                <button class="dropbtn">Resources</button>
+                <div class="dropdown-content">
+                    <a href="aboutUs.html">About Us</a>
+                    <a href="contact.html">Contact Us</a>
+                </div>
+            </div>
+            <li>
+                <a href="profile.html">Profile</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="start-screen hide">
+            <h1 class="heading">Quiz</h1>
+            <div class="settings">
+                <label for="num-questions">Number of questions</label>
+                <select name="" id="numquestions">
+                    <option value="none">--------------------------------------------------------------------</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                </select>
 
-        <label for="category">select category</label>
-        <select name="" id="category">
-          <option value="none">--------------------------------------------------------------------</option>
-          <option value="html">HTML</option>
-          <option value="javascript">JAVASCRIPt</option>
-          <option value="database">DATA BASE</option>
-          <option value="php">PHP</option>
-          <option value="css">CSS</option>
-        </select>
+                <label for="category">select category</label>
+                <select name="" id="category">
+                    <option value="none">--------------------------------------------------------------------</option>
+                    <option value="html">HTML</option>
+                    <option value="javascript">JAVASCRIPt</option>
+                    <option value="database">DATA BASE</option>
+                    <option value="php">PHP</option>
+                    <option value="css">CSS</option>
+                </select>
 
-        <label for="difficulty">select difficulty</label>
-        <select name="" id="difficulty">
-          <option value="none">--------------------------------------------------------------------</option>
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
-        </select>
+                <label for="difficulty">select difficulty</label>
+                <select name="" id="difficulty">
+                    <option value="none">--------------------------------------------------------------------</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
 
-        <label for="time">select time per question</label>
-        <select name="" id="time">
-          <option value="none">--------------------------------------------------------------------</option>
-          <option value="10 seconds">10 seconds</option>
-          <option value="15 seconds">15 seconds</option>
-          <option value="20 seconds">20 seconds</option>
-          <option value="25 seconds">25 seconds</option>
-          <option value="30 seconds">30 seconds</option>
-        </select>
-      </div>
-      <button class="btn" id="start-btn">Start Quiz</button>
-    </div>
-    <div class="quiz hide">
-      <div class="timer">
-        <div class="progress">
-          <div class="progress-bar"></div>
-          <span class="progress-text">50</span>
+                <label for="time">select time per question</label>
+                <select name="" id="time">
+                    <option value="none">--------------------------------------------------------------------</option>
+                    <option value="10 seconds">10 seconds</option>
+                    <option value="15 seconds">15 seconds</option>
+                    <option value="20 seconds">20 seconds</option>
+                    <option value="25 seconds">25 seconds</option>
+                    <option value="30 seconds">30 seconds</option>
+                </select>
+            </div>
+            <button class="btn" id="start-btn">Start Quiz</button>
         </div>
-      </div>
-      <div class="question-wrapper">
-        <div class="number">
-          Question <span class="current">1</span><span class="total">/10</span>
-        </div>
-        <div class="question">This is a Question</div>
-        <div class="answer-wrapper">
-          <div class="answer selected">
-            <span class="text">answer</span>
-            <span class="checkbox">
-              <span class="icon">✔</span>
-            </span>
-          </div>
-          <div class="answer correct">
-            <span class="text">answer</span>
-            <span class="checkbox">
-              <span class="icon">✔</span>
-            </span>
-          </div>
+        <div class="quiz hide">
+            <div class="timer">
+                <div class="progress">
+                    <div class="progress-bar"></div>
+                    <span class="progress-text">50</span>
+                </div>
+            </div>
+            <div class="question-wrapper">
+                <div class="number">
+                    Question <span class="current">1</span><span class="total">/10</span>
+                </div>
+                <div class="question">This is a Question</div>
+                <div class="answer-wrapper">
+                    <div class="answer selected">
+                        <span class="text">answer</span>
+                        <span class="checkbox">
+                            <span class="icon">✔</span>
+                        </span>
+                    </div>
+                    <div class="answer correct">
+                        <span class="text">answer</span>
+                        <span class="checkbox">
+                            <span class="icon">✔</span>
+                        </span>
+                    </div>
 
-           <div class="answer wrong">
-            <span class="text">answer</span>
-            <span class="checkbox">
-              <span class="icon">✔</span>
-            </span>
-          </div>
+                    <div class="answer wrong">
+                        <span class="text">answer</span>
+                        <span class="checkbox">
+                            <span class="icon">✔</span>
+                        </span>
+                    </div>
+                </div>
+                <button class="btn submit" disabled>Submit</button>
+                <button class="btn next">Next</button>
+            </div>
         </div>
-        <button class="btn submit" disabled>Submit</button>
-        <button class="btn next">Next</button>
-      </div>
+        <div class="end-screen">
+            <h1 class="heading">Quiz</h1>
+            <div class="score">
+                <span class="score-text">Yor Score:</span>
+            </div>
+            <div>
+                <span class="final-score">0</span>
+                <span class="total-score">/10</span>
+            </div>
+        </div>
+        <button class="btn restart">Restart Quiz</button>
     </div>
-    <div class="end-screen">
-      <h1 class="heading">Quiz</h1>
-      <div class="score">
-      <span class="score-text">Yor Score:</span>
-      </div>
-      <div>
-        <span class="final-score">0</span>
-        <span class="total-score">/10</span>
-      </div>
-    </div>
-    <button class="btn restart">Restart Quiz</button>
-  </div>
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
