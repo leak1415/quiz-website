@@ -52,7 +52,176 @@
             <h1 class="hero-title">Welcome to Quizzy</h1>
             <p class="hero-subtitle">Challenge your knowledge with fun quizzes on programming, IT fundamentals, and
                 technology!</p>
-            <a href="./auth/login.html" class="btn btn-hero">Get Started</a>
+            <!-- <a href="#guest-home" class="btn btn-hero">Get Started</a> -->
+            <a href="./auth/login.html" class="btn btn-hero" id="cta-button">Get Started</a>
+        </div>
+    </section>
+
+    <!-- Dashboard Section (for logged-in users) -->
+    <section class="dashboard py-5" id="dashboard-section" style="display: none;">
+        <div class="container">
+            <h2 class="text-center mb-4">Your Dashboard</h2>
+            <div class="row">
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="card text-center p-3">
+                        <div class="card-body">
+                            <i class="fas fa-tasks fa-2x text-primary mb-2"></i>
+                            <h5 class="card-title">Quizzes Taken</h5>
+                            <p class="display-4" id="quizzes-taken">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="card text-center p-3">
+                        <div class="card-body">
+                            <i class="fas fa-percentage fa-2x text-success mb-2"></i>
+                            <h5 class="card-title">Success Rate</h5>
+                            <p class="display-4" id="success-rate">0%</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="card text-center p-3">
+                        <div class="card-body">
+                            <i class="fas fa-trophy fa-2x text-warning mb-2"></i>
+                            <h5 class="card-title">Ranking</h5>
+                            <p class="display-4" id="ranking">#0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="card text-center p-3">
+                        <div class="card-body">
+                            <i class="fas fa-star fa-2x text-info mb-2"></i>
+                            <h5 class="card-title">Avg. Score</h5>
+                            <p class="display-4" id="avg-score">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Recent Activity</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush" id="recent-activity">
+                                <!-- Will be populated by JavaScript -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Continue Learning</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group" id="continue-learning">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Quizzes Section -->
+    <section class="py-5 bg-light" id="featured-quizzes">
+        <div class="container">
+            <h2 class="text-center mb-4">Featured Quizzes</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <i class="fas fa-code fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">HTML & CSS</h5>
+                            <p class="card-text">Test your knowledge of web development fundamentals</p>
+                            <a href="quiz.html" class="btn btn-primary">Start Quiz</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <i class="fab fa-js fa-3x text-warning mb-3"></i>
+                            <h5 class="card-title">JavaScript</h5>
+                            <p class="card-text">Challenge yourself with JavaScript concepts</p>
+                            <a href="quiz.html" class="btn btn-primary">Start Quiz</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <i class="fas fa-server fa-3x text-info mb-3"></i>
+                            <h5 class="card-title">General IT</h5>
+                            <p class="card-text">Explore IT fundamentals and best practices</p>
+                            <a href="quiz.html" class="btn btn-primary">Start Quiz</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">What Our Users Say</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                            </div>
+                            <p class="card-text">"This quiz platform helped me prepare for my certification exams. The
+                                variety of questions is impressive!"</p>
+                            <p class="text-muted">- Alex Johnson</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                            </div>
+                            <p class="card-text">"The real-time feedback and explanations make learning so much more
+                                effective. Highly recommend!"</p>
+                            <p class="text-muted">- Sarah Williams</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                            </div>
+                            <p class="card-text">"Great way to test your knowledge regularly. The progress tracking is
+                                very motivating!"</p>
+                            <p class="text-muted">- Michael Chen</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
