@@ -62,11 +62,26 @@ function updateAuthUI() {
 
     if (isLoggedIn()) {
         const userData = getUserData();
+<<<<<<< HEAD
         // Make links work from both root and /pages/* locations
         const inPagesFolder = window.location.pathname.includes('/pages/');
         const profileHref = inPagesFolder ? 'profile.html' : 'pages/profile.html';
         const resultsHref = inPagesFolder ? 'results.html' : 'pages/results.html';
         const logoutHref = inPagesFolder ? '../auth/logout.html' : 'auth/logout.html';
+=======
+
+        // Determine the correct path prefix based on current page location
+        const currentPath = window.location.pathname;
+        let pathPrefix = '';
+
+        if (currentPath.includes('/pages/')) {
+            pathPrefix = '../'; // If we're in the pages directory, go up one level
+        } else if (currentPath.includes('/auth/')) {
+            pathPrefix = '../'; // If we're in the auth directory, go up one level
+        } else {
+            pathPrefix = './'; // If we're in root, stay at current level
+        }
+>>>>>>> feature/develop
 
         const userMenu = `
             <div class="dropdown">
@@ -74,17 +89,38 @@ function updateAuthUI() {
                     ${userData?.fullName || userData?.email || 'User'}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+<<<<<<< HEAD
                     <li><a class="dropdown-item" href="${profileHref}"><i class="fas fa-user me-2"></i>Profile</a></li>
                     <li><a class="dropdown-item" href="${resultsHref}"><i class="fas fa-trophy me-2"></i>My Results</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="${logoutHref}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+=======
+                    <li><a class="dropdown-item" href="${pathPrefix}pages/profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
+                    <li><a class="dropdown-item" href="${pathPrefix}pages/results.html"><i class="fas fa-trophy me-2"></i>My Results</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="${pathPrefix}auth/logout.html"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+>>>>>>> feature/develop
                 </ul>
             </div>
         `;
         authSection.innerHTML = userMenu;
     } else {
+<<<<<<< HEAD
         const loginHref = window.location.pathname.includes('/pages/') ? 'login.html' : 'auth/login.html';
         authSection.innerHTML = `<a href="${loginHref}">Login</a>`;
+=======
+        // Determine the correct path for login based on current location
+        const currentPath = window.location.pathname;
+        let loginPath = './auth/login.html';
+
+        if (currentPath.includes('/pages/')) {
+            loginPath = '../auth/login.html';
+        } else if (currentPath.includes('/auth/')) {
+            loginPath = './login.html'; // If already in auth directory
+        }
+
+        authSection.innerHTML = `<a href="${loginPath}">Login</a>`;
+>>>>>>> feature/develop
     }
 }
 
@@ -95,17 +131,17 @@ function updateDashboardContent(userData) {
     if (quizzesTakenElement) {
         quizzesTakenElement.textContent = '5';
     }
-    
+
     const successRateElement = document.getElementById('success-rate');
     if (successRateElement) {
         successRateElement.textContent = '87%';
     }
-    
+
     const rankingElement = document.getElementById('ranking');
     if (rankingElement) {
         rankingElement.textContent = '#12';
     }
-    
+
     const avgScoreElement = document.getElementById('avg-score');
     if (avgScoreElement) {
         avgScoreElement.textContent = '8.4';
