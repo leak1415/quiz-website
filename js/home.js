@@ -62,22 +62,29 @@ function updateAuthUI() {
 
     if (isLoggedIn()) {
         const userData = getUserData();
+        // Make links work from both root and /pages/* locations
+        const inPagesFolder = window.location.pathname.includes('/pages/');
+        const profileHref = inPagesFolder ? 'profile.html' : 'pages/profile.html';
+        const resultsHref = inPagesFolder ? 'results.html' : 'pages/results.html';
+        const logoutHref = inPagesFolder ? '../auth/logout.html' : 'auth/logout.html';
+
         const userMenu = `
             <div class="dropdown">
                 <button class="dropbtn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     ${userData?.fullName || userData?.email || 'User'}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
-                    <li><a class="dropdown-item" href="results.html"><i class="fas fa-trophy me-2"></i>My Results</a></li>
+                    <li><a class="dropdown-item" href="${profileHref}"><i class="fas fa-user me-2"></i>Profile</a></li>
+                    <li><a class="dropdown-item" href="${resultsHref}"><i class="fas fa-trophy me-2"></i>My Results</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="auth/logout.html"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    <li><a class="dropdown-item" href="${logoutHref}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                 </ul>
             </div>
         `;
         authSection.innerHTML = userMenu;
     } else {
-        authSection.innerHTML = '<a href="auth/login.html">Login</a>';
+        const loginHref = window.location.pathname.includes('/pages/') ? 'login.html' : 'auth/login.html';
+        authSection.innerHTML = `<a href="${loginHref}">Login</a>`;
     }
 }
 
