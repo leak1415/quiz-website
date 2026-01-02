@@ -3,12 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz</title>
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Bootstrap 5.3.0 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.0.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../css/home.css" />
     <link rel="stylesheet" href="../css/leaderboard.css" />
-    <title>Quiz</title>
+    <link rel="stylesheet" href="../css/footer.css">
+    <link rel="stylesheet" href="../css/nav.css">
+    <link rel="icon" type="image/png" href="./images/logo.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   </head>
   <body>
-    <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <!-- <nav class="navbar" role="navigation" aria-label="Main navigation">
       <div class="logo">
         <img
           class="img-logo"
@@ -50,7 +60,42 @@
           <a href="profile.html">Profile</a>
         </li>
       </ul>
-    </nav>
+    </nav> -->
+
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <div class="logo">
+        <img class="img-logo" src="../images/logo.png" alt="Quiz Website Logo" loading="lazy">
+        <p class="name-web">Quiz Website</p>
+      </div>
+      <button id="hamburger" class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
+      <ul class="nav-list" id="nav-list">
+        <li>
+          <a href="../index.html" class="nav-link">Home</a>
+        </li>
+        <li>
+          <a href="./quiz.html" class="nav-link">Quiz</a>
+        </li>
+        <li>
+          <a href="./leaderBoard.html" class="nav-link">Leaderboard</a>
+        </li>
+        <li>
+          <!-- <a href="./results.html" class="nav-link">Results</a> -->
+        </li>
+        <div class="drop-down">
+          <button class="dropbtn">Resources</button>
+          <div class="dropdown-content">
+            <a href="./aboutUs.html">About Us</a>
+            <a href="./contact.html">Contact Us</a>
+          </div>
+        </div>
+        <li id="auth-section">
+          <!-- Will be populated by JavaScript based on login status -->
+        </li>
+      </ul>
+    </div>
+  </nav>
+
     <div class="" id="leaderboardPage">
       <h2>Leaderboard</h2>
 
@@ -94,6 +139,62 @@
         </tbody>
       </table>
     </div>
+
+        <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quiz Website</h3>
+                <p>Test your knowledge with interactive quizzes on HTML & CSS, JavaScript, and General IT. Challenge
+                    yourself and climb the leaderboard!</p>
+                <div class="social-links">
+                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="./pages/quiz.html">Quiz</a></li>
+                    <li><a href="./pages/results.html">Leaderboard</a></li>
+                    <li><a href="./pages/results.html">Results</a></li>
+                    <li><a href="./pages/about.html">About Us</a></li>
+                    <li><a href="./pages/contact.html">Contact Us</a></li>
+                    <li><a href="./pages/profile.html">Profile</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="./pages/about.html">About Us</a></li>
+                    <li><a href="./pages/contact.html">Contact Us</a></li>
+                    <li><a href="./pages/profile.html">Profile</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Tutorials</a></li>
+                    <li><a href="#">Documentation</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Subscribe to get updates and quiz tips</p>
+                <form class="newsletter-form">
+                    <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+                    <button type="submit" class="newsletter-btn">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Quiz Website. All rights reserved.</p>
+        </div>
+    </footer>
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/home.js"></script>
     <script src="../js/leaderBoard.js"></script>
+    <script src="../js/auth-guard.js"></script>
   </body>
 </html>
