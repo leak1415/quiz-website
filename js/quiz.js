@@ -1,3 +1,29 @@
+// Authentication check functions
+function isLoggedIn() {
+  let appData = JSON.parse(localStorage.getItem("quizAppData"));
+  if (!appData) {
+    appData = JSON.parse(sessionStorage.getItem("quizAppData"));
+  }
+  return appData && appData.loggedIn === true;
+}
+
+function getUserData() {
+  let appData = JSON.parse(localStorage.getItem("quizAppData"));
+  if (!appData) {
+    appData = JSON.parse(sessionStorage.getItem("quizAppData"));
+  }
+  return appData && appData.currentUser ? appData.currentUser : null;
+}
+
+// Check if user is logged in when page loads
+document.addEventListener("DOMContentLoaded", function () {
+  if (!isLoggedIn()) {
+    alert("Please login first to access the quiz!");
+    window.location.href = "../auth/login.html";
+    return;
+  }
+});
+
 const quizzes = {
   web: [
     {
@@ -309,27 +335,112 @@ function addQuestionInput() {
   const questionDiv = document.createElement("div");
   questionDiv.className = "question-input";
   questionDiv.id = `question-${questionCount}`;
-  questionDiv.innerHTML = `
+
+  const questionHTML = `
     <div style="margin-bottom: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 8px;">
       <h4>Question ${questionCount}</h4>
-      <input type="text" class="question-text" placeholder="Enter question text" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-      <div class="choices">
-        <input type="text" class="choice" placeholder="Choice 1" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-        <input type="text" class="choice" placeholder="Choice 2" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-        <input type="text" class="choice" placeholder="Choice 3" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-        <input type="text" class="choice" placeholder="Choice 4" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+      
+      <!-- Question Type Selection -->
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Question Type:</label>
+        <select class="question-type" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+          <option value="multiple">Multiple Choice</option>
+          <option value="trueFalse">True/False</option>
+          <option value="checkbox">Checkbox (Multiple Answers)</option>
+        </select>
       </div>
-      <select class="answer-select" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-        <option value="">Select Correct Answer</option>
-        <option value="0">Choice 1</option>
-        <option value="1">Choice 2</option>
-        <option value="2">Choice 3</option>
-        <option value="3">Choice 4</option>
-      </select>
+      
+      <!-- Question Text -->
+      <input type="text" class="question-text" placeholder="Enter question text" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+      
+      <!-- Choices Container (Dynamic based on question type) -->
+      <div class="question-type-container" style="margin-bottom: 1rem;">
+        <!-- Multiple Choice Container -->
+        <div class="multiple-choice-container">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Choices:</label>
+          <div class="choices">
+            <input type="text" class="choice" placeholder="Choice 1" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" class="choice" placeholder="Choice 2" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" class="choice" placeholder="Choice 3" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" class="choice" placeholder="Choice 4" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+          </div>
+          <select class="answer-select" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+            <option value="">Select Correct Answer</option>
+            <option value="0">Choice 1</option>
+            <option value="1">Choice 2</option>
+            <option value="2">Choice 3</option>
+            <option value="3">Choice 4</option>
+          </select>
+        </div>
+        
+        <!-- True/False Container (Hidden by default) -->
+        <div class="trueFalse-container" style="display: none;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Correct Answer:</label>
+          <select class="trueFalse-answer" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+            <option value="">Select Correct Answer</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
+        </div>
+        
+        <!-- Checkbox Container (Hidden by default) -->
+        <div class="checkbox-container" style="display: none;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Choices (Check all that are correct):</label>
+          <div class="checkbox-choices">
+            <div style="margin-bottom: 0.5rem;">
+              <input type="text" class="checkbox-choice" placeholder="Choice 1" style="width: calc(100% - 30px); padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="checkbox" class="checkbox-correct" style="margin-left: 0.5rem;" title="Mark as correct">
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+              <input type="text" class="checkbox-choice" placeholder="Choice 2" style="width: calc(100% - 30px); padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="checkbox" class="checkbox-correct" style="margin-left: 0.5rem;" title="Mark as correct">
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+              <input type="text" class="checkbox-choice" placeholder="Choice 3" style="width: calc(100% - 30px); padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="checkbox" class="checkbox-correct" style="margin-left: 0.5rem;" title="Mark as correct">
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+              <input type="text" class="checkbox-choice" placeholder="Choice 4" style="width: calc(100% - 30px); padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="checkbox" class="checkbox-correct" style="margin-left: 0.5rem;" title="Mark as correct">
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <button type="button" class="btn secondary" style="margin-top: 0.5rem; width: 100%;" onclick="removeQuestion('question-${questionCount}')">Remove</button>
     </div>
   `;
+
+  questionDiv.innerHTML = questionHTML;
   $("questions-container").appendChild(questionDiv);
+
+  // Add event listener for question type change
+  const typeSelect = questionDiv.querySelector(".question-type");
+  typeSelect.addEventListener("change", function () {
+    updateQuestionTypeDisplay(questionDiv, this.value);
+  });
+}
+
+function updateQuestionTypeDisplay(questionDiv, questionType) {
+  const multipleContainer = questionDiv.querySelector(
+    ".multiple-choice-container"
+  );
+  const trueFalseContainer = questionDiv.querySelector(".trueFalse-container");
+  const checkboxContainer = questionDiv.querySelector(".checkbox-container");
+
+  // Hide all containers
+  multipleContainer.style.display = "none";
+  trueFalseContainer.style.display = "none";
+  checkboxContainer.style.display = "none";
+
+  // Show the selected container
+  if (questionType === "multiple") {
+    multipleContainer.style.display = "block";
+  } else if (questionType === "trueFalse") {
+    trueFalseContainer.style.display = "block";
+  } else if (questionType === "checkbox") {
+    checkboxContainer.style.display = "block";
+  }
 }
 
 function removeQuestion(id) {
@@ -350,16 +461,49 @@ $("submit-custom-quiz-btn").onclick = () => {
 
   questionDivs.forEach((div) => {
     const questionText = div.querySelector(".question-text").value;
-    const choicesInputs = div.querySelectorAll(".choice");
-    const choices = Array.from(choicesInputs).map((input) => input.value);
-    const answer = parseInt(div.querySelector(".answer-select").value);
+    const questionType = div.querySelector(".question-type").value;
 
-    if (questionText && choices.every((c) => c) && answer !== "") {
-      customQuestions.push({
-        question: questionText,
-        choices: choices,
-        answer: answer,
-      });
+    if (!questionText) return; // Skip if no question text
+
+    let questionObj = {
+      question: questionText,
+      type: questionType,
+    };
+
+    if (questionType === "multiple") {
+      // Multiple choice question
+      const choicesInputs = div.querySelectorAll(".choice");
+      const choices = Array.from(choicesInputs).map((input) => input.value);
+      const answer = parseInt(div.querySelector(".answer-select").value);
+
+      if (choices.every((c) => c) && answer !== "") {
+        questionObj.choices = choices;
+        questionObj.answer = answer;
+        customQuestions.push(questionObj);
+      }
+    } else if (questionType === "trueFalse") {
+      // True/False question
+      const answer = div.querySelector(".trueFalse-answer").value;
+
+      if (answer !== "") {
+        questionObj.choices = ["True", "False"];
+        questionObj.answer = answer === "true" ? 0 : 1;
+        customQuestions.push(questionObj);
+      }
+    } else if (questionType === "checkbox") {
+      // Checkbox question (multiple correct answers)
+      const checkboxChoices = div.querySelectorAll(".checkbox-choice");
+      const checkboxCorrects = div.querySelectorAll(".checkbox-correct");
+      const choices = Array.from(checkboxChoices).map((input) => input.value);
+      const correctAnswers = Array.from(checkboxCorrects)
+        .map((checkbox, index) => (checkbox.checked ? index : -1))
+        .filter((i) => i !== -1);
+
+      if (choices.every((c) => c) && correctAnswers.length > 0) {
+        questionObj.choices = choices;
+        questionObj.answer = correctAnswers; // Array of correct answer indices
+        customQuestions.push(questionObj);
+      }
     }
   });
 
@@ -420,20 +564,41 @@ function loadQuestion() {
 
   $("quiz-form").innerHTML = "";
 
-  q.choices.forEach((choice, i) => {
-    const label = document.createElement("label");
-    label.style.display = "flex";
-    label.style.alignItems = "center";
-    label.style.gap = "10px";
+  const questionType = q.type || "multiple"; // Default to multiple choice for backward compatibility
 
-    const input = document.createElement("input");
-    input.type = "radio";
-    input.name = "question";
-    input.value = i;
-    label.appendChild(input);
-    label.append(` ${choice}`);
-    $("quiz-form").appendChild(label);
-  });
+  if (questionType === "checkbox") {
+    // Checkbox question - multiple correct answers
+    q.choices.forEach((choice, i) => {
+      const label = document.createElement("label");
+      label.style.display = "flex";
+      label.style.alignItems = "center";
+      label.style.gap = "10px";
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = `question-${i}`;
+      input.value = i;
+      label.appendChild(input);
+      label.append(` ${choice}`);
+      $("quiz-form").appendChild(label);
+    });
+  } else {
+    // Radio button for multiple choice and true/false
+    q.choices.forEach((choice, i) => {
+      const label = document.createElement("label");
+      label.style.display = "flex";
+      label.style.alignItems = "center";
+      label.style.gap = "10px";
+
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "question";
+      input.value = i;
+      label.appendChild(input);
+      label.append(` ${choice}`);
+      $("quiz-form").appendChild(label);
+    });
+  }
 
   startTimer();
   updateProgress();
@@ -452,37 +617,89 @@ function startTimer() {
 }
 
 function checkAnswer() {
-  const selected = document.querySelector('input[name="question"]:checked');
-  const userAnswer = selected ? parseInt(selected.value) : null;
-  if (userAnswer !== null && userAnswer === questions[current].answer) {
-    score++;
+  const q = questions[current];
+  const questionType = q.type || "multiple";
+
+  if (questionType === "checkbox") {
+    // For checkbox questions, check if all correct answers are selected and no incorrect ones
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const selectedAnswers = Array.from(checkboxes)
+      .map((checkbox, index) => (checkbox.checked ? index : -1))
+      .filter((i) => i !== -1);
+
+    // Sort both arrays to compare
+    const correctAnswers = Array.isArray(q.answer)
+      ? q.answer.sort((a, b) => a - b)
+      : [];
+    const userAnswers = selectedAnswers.sort((a, b) => a - b);
+
+    // Check if arrays are equal
+    if (JSON.stringify(userAnswers) === JSON.stringify(correctAnswers)) {
+      score++;
+    }
+  } else {
+    // For multiple choice and true/false
+    const selected = document.querySelector('input[name="question"]:checked');
+    const userAnswer = selected ? parseInt(selected.value) : null;
+    if (userAnswer !== null && userAnswer === q.answer) {
+      score++;
+    }
   }
 }
 
 function showFeedback(callback) {
   const q = questions[current];
-  const correctIndex = q.answer;
-
+  const questionType = q.type || "multiple";
   const labels = document.querySelectorAll("#quiz-form label");
-  labels.forEach((label) => {
-    const input = label.querySelector("input");
-    const index = parseInt(input.value);
 
-    if (index === correctIndex) {
-      label.classList.add("correct");
-    } else if (input.checked) {
-      label.classList.add("incorrect");
-    }
-    input.disabled = true;
-  });
+  if (questionType === "checkbox") {
+    // For checkbox questions
+    const correctAnswers = Array.isArray(q.answer) ? q.answer : [];
 
-  const correctDiv = document.createElement("div");
-  correctDiv.className = "correct-answer-popup";
-  correctDiv.innerHTML = `<p>✅ Correct answer: <strong>${q.choices[correctIndex]}</strong></p>`;
-  $("quiz-form").appendChild(correctDiv);
+    labels.forEach((label) => {
+      const input = label.querySelector("input");
+      const index = parseInt(input.value);
+
+      if (correctAnswers.includes(index)) {
+        label.classList.add("correct");
+      } else if (input.checked) {
+        label.classList.add("incorrect");
+      }
+      input.disabled = true;
+    });
+
+    const correctDiv = document.createElement("div");
+    correctDiv.className = "correct-answer-popup";
+    const correctChoices = correctAnswers.map((i) => q.choices[i]).join(", ");
+    correctDiv.innerHTML = `<p>✅ Correct answers: <strong>${correctChoices}</strong></p>`;
+    $("quiz-form").appendChild(correctDiv);
+  } else {
+    // For multiple choice and true/false
+    const correctIndex = q.answer;
+
+    labels.forEach((label) => {
+      const input = label.querySelector("input");
+      const index = parseInt(input.value);
+
+      if (index === correctIndex) {
+        label.classList.add("correct");
+      } else if (input.checked) {
+        label.classList.add("incorrect");
+      }
+      input.disabled = true;
+    });
+
+    const correctDiv = document.createElement("div");
+    correctDiv.className = "correct-answer-popup";
+    correctDiv.innerHTML = `<p>✅ Correct answer: <strong>${q.choices[correctIndex]}</strong></p>`;
+    $("quiz-form").appendChild(correctDiv);
+  }
 
   setTimeout(() => {
-    correctDiv.remove();
+    const correctDiv = $("quiz-form").querySelector(".correct-answer-popup");
+    if (correctDiv) {
+      correctDiv.remove();
+    }
     callback();
   }, 1500);
 }
@@ -503,7 +720,12 @@ function updateProgress() {
 }
 
 function saveQuizResultToLeaderboard() {
-  const playerName = prompt("Enter your name:") || "Anonymous";
+  // Get logged-in user data
+  const userData = getUserData();
+  const playerName = userData
+    ? userData.fullName || userData.email
+    : "Anonymous";
+
   const category =
     selectedSubject && subjectInfo[selectedSubject]
       ? subjectInfo[selectedSubject].name
@@ -519,8 +741,9 @@ function saveQuizResultToLeaderboard() {
     loggedIn: false,
   };
 
-  // Create new entry
+  // Create new entry with user ID for tracking
   const newEntry = {
+    userId: userData ? userData.id : null,
     name: playerName,
     score: score,
     category: category,

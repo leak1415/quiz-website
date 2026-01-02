@@ -64,7 +64,27 @@ document.addEventListener("DOMContentLoaded", function () {
     if (ctaButton) {
       ctaButton.textContent = "Sign In to Continue";
       ctaButton.href = "auth/login.html";
+      ctaButton.onclick = (e) => {
+        e.preventDefault();
+        window.location.href = "auth/login.html";
+      };
     }
+  }
+
+  // Handle Get Started button click
+  const ctaButton = document.getElementById("cta-button");
+  if (ctaButton) {
+    ctaButton.addEventListener("click", function (e) {
+      if (isLoggedIn()) {
+        // If logged in, go to quiz
+        e.preventDefault();
+        window.location.href = "./pages/quiz.html";
+      } else {
+        // If not logged in, go to login
+        e.preventDefault();
+        window.location.href = "./auth/login.html";
+      }
+    });
   }
 
   // Remove the logout button event listener since we're now using direct links to the logout page
