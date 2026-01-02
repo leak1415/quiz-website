@@ -1,9 +1,7 @@
+// Global authentication functions needed for the home page
 function isLoggedIn() {
-    let appData = JSON.parse(localStorage.getItem("quizAppData"));
-    if (!appData) {
-        appData = JSON.parse(sessionStorage.getItem("quizAppData"));
-    }
-    return appData && appData.loggedIn === true;
+    const loggedIn = localStorage.getItem('quizApp_loggedIn') || sessionStorage.getItem('quizApp_loggedIn');
+    return loggedIn === "true";
 }
 
 function getUserData() {
@@ -19,74 +17,233 @@ function getUserData() {
     }
 }
 
-function logout() {
-    let appData = JSON.parse(localStorage.getItem("quizAppData"));
-    if (appData) {
-        appData.loggedIn = false;
-        appData.currentUser = null;
-        localStorage.setItem("quizAppData", JSON.stringify(appData));
-    }
-
-    let sessionData = JSON.parse(sessionStorage.getItem("quizAppData"));
-    if (sessionData) {
-        sessionData.loggedIn = false;
-        sessionData.currentUser = null;
-        sessionStorage.setItem("quizAppData", JSON.stringify(sessionData));
-    }
-
-    localStorage.removeItem("quizApp_remember");
-    sessionStorage.removeItem("quizApp_remember");
-    window.location.href = "../index.html";
-}
-
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function () {
     // Check if user is logged in when home page loads
     updateAuthUI();
 
-    // Display user info if logged in
+    // Only update dashboard content if on the home page (where dashboard elements exist)
     const userData = getUserData();
-    if (userData) {
+    if (userData && document.getElementById('dashboard-section')) {
         // Show dashboard section for logged-in users
-        const dashboardSection = document.getElementById("dashboard-section");
+        const dashboardSection = document.getElementById('dashboard-section');
         if (dashboardSection) {
-            dashboardSection.style.display = "block";
+            dashboardSection.style.display = 'block';
         }
 
-        // Update welcome message
-        const userGreetingElement = document.getElementById("userGreeting");
+        // Update welcome message if element exists
+        const userGreetingElement = document.getElementById('userGreeting');
         if (userGreetingElement) {
-            userGreetingElement.textContent = `Welcome back! ${userData.fullName || userData.email
-                } is logged in.`;
+            userGreetingElement.textContent = `Welcome back! ${userData.fullName || userData.email} is logged in.`;
         }
 
-        // Update dashboard content
+        // Update dashboard content if elements exist
         updateDashboardContent(userData);
-    } else {
-        // Show login button if not logged in
-        const ctaButton = document.getElementById("cta-button");
+    } else if (!userData && document.getElementById('cta-button')) {
+        // Show login button if not logged in and on home page
+        const ctaButton = document.getElementById('cta-button');
         if (ctaButton) {
-            ctaButton.textContent = "Sign In to Continue";
-            ctaButton.href = "auth/login.html";
-            ctaButton.onclick = (e) => {
-                e.preventDefault();
-                window.location.href = "auth/login.html";
-            };
+            ctaButton.textContent = 'Sign In to Continue';
+
+            // Determine the correct path for login based on current location
+            const currentPath = window.location.pathname;
+            let loginPath = './auth/login.html';
+
+            if (currentPath.includes('/pages/')) {
+                loginPath = '../auth/login.html';
+            } else if (currentPath.includes('/auth/')) {
+                loginPath = './login.html'; // If already in auth directory
+            }
+
+            ctaButton.href = loginPath;
         }
     }
 
-    // Handle Get Started button click
-    const ctaButton = document.getElementById("cta-button");
-    if (ctaButton) {
-        ctaButton.addEventListener("click", function (e) {
-            if (isLoggedIn()) {
-                // If logged in, go to quiz
+    // Toggle mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const navList = document.getElementById('nav-list');
+
+    if (hamburger && navList) {
+        hamburger.addEventListener('click', () => {
+            navList.classList.toggle('active');
+            const isExpanded = navList.classList.contains('active');
+            hamburger.setAttribute('aria-expanded', isExpanded);
+        });
+    }
+
+    // Toggle dropdown on mobile
+    const dropDown = document.querySelector('.drop-down');
+    const dropContent = document.querySelector('.dropdown-content');
+
+    if (dropDown && dropContent) {
+        dropDown.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
                 e.preventDefault();
-                window.location.href = "./pages/quiz.html";
-            } else {
-                // If not logged in, go to login
-                e.preventDefault();
-                window.location.href = "./auth/login.html";
+                dropContent.classList.toggle('active');
             }
         });
     }
+
+    // Highlight active link
+    const currentPath = window.location.pathname.split('/').pop();
+    const links = document.querySelectorAll('.nav-list .nav-link');
+
+    links.forEach(link => {
+        const linkPath = link.getAttribute('href') ? link.getAttribute('href').split('/').pop() : '';
+        // Compare paths, treating empty path as index.html
+        const normalizedCurrentPath = currentPath || 'index.html';
+        const normalizedLinkPath = linkPath || 'index.html';
+        if (normalizedLinkPath === normalizedCurrentPath) {
+            link.classList.add('active');
+        }
+    });
 });
+
+// Update UI based on authentication status
+function updateAuthUI() {
+    const authSection = document.getElementById('auth-section');
+    if (!authSection) return;
+
+    if (isLoggedIn()) {
+        const userData = getUserData();
+
+        // Determine the correct path prefix based on current page location
+        const currentPath = window.location.pathname;
+        let pathPrefix = '';
+
+        if (currentPath.includes('/pages/')) {
+            pathPrefix = '../'; // If we're in the pages directory, go up one level
+        } else if (currentPath.includes('/auth/')) {
+            pathPrefix = '../'; // If we're in the auth directory, go up one level
+        } else {
+            pathPrefix = './'; // If we're in root, stay at current level
+        }
+
+        const userMenu = `
+            <div class="dropdown">
+                <button class="dropbtn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    ${userData?.fullName || userData?.email || 'User'}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="${pathPrefix}pages/profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
+                    <li><a class="dropdown-item" href="${pathPrefix}pages/result.html"><i class="fas fa-trophy me-2"></i>My Results</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="${pathPrefix}auth/logout.html"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
+            </div>
+        `;
+        authSection.innerHTML = userMenu;
+    } else {
+        // Determine the correct path for login based on current location
+        const currentPath = window.location.pathname;
+        let loginPath = './auth/login.html';
+
+        if (currentPath.includes('/pages/')) {
+            loginPath = '../auth/login.html';
+        } else if (currentPath.includes('/auth/')) {
+            loginPath = './login.html'; // If already in auth directory
+        }
+
+        authSection.innerHTML = `<a href="${loginPath}">Login</a>`;
+    }
+}
+
+// Update dashboard content with user stats
+function updateDashboardContent(userData) {
+    // For now, we'll use placeholder data. In a real application, this would come from the server or local storage
+    const quizzesTakenElement = document.getElementById('quizzes-taken');
+    if (quizzesTakenElement) {
+        quizzesTakenElement.textContent = '5';
+    }
+
+    const successRateElement = document.getElementById('success-rate');
+    if (successRateElement) {
+        successRateElement.textContent = '87%';
+    }
+
+    const rankingElement = document.getElementById('ranking');
+    if (rankingElement) {
+        rankingElement.textContent = '#12';
+    }
+
+    const avgScoreElement = document.getElementById('avg-score');
+    if (avgScoreElement) {
+        avgScoreElement.textContent = '8.4';
+    }
+
+    // Update recent activity
+    const recentActivity = document.getElementById('recent-activity');
+    if (recentActivity) {
+        recentActivity.innerHTML = `
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    JavaScript Quiz
+                </div>
+                <span class="badge bg-primary rounded-pill">85%</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    HTML & CSS Quiz
+                </div>
+                <span class="badge bg-primary rounded-pill">92%</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-clock text-warning me-2"></i>
+                    Started: General IT Quiz
+                </div>
+                <span class="badge bg-secondary rounded-pill">In Progress</span>
+            </li>
+        `;
+    }
+
+    // Update continue learning section
+    const continueLearning = document.getElementById('continue-learning');
+    if (continueLearning) {
+        continueLearning.innerHTML = `
+            <a href="quiz.html" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Complete: General IT Quiz</h6>
+                    <small>50%</small>
+                </div>
+                <p class="mb-1">Continue where you left off</p>
+            </a>
+            <a href="quiz.html" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Advanced JavaScript Quiz</h6>
+                    <small>New</small>
+                </div>
+                <p class="mb-1">Challenge yourself with advanced concepts</p>
+            </a>
+            <a href="quiz.html" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Web Security Fundamentals</h6>
+                    <small>Recommended</small>
+                </div>
+                <p class="mb-1">Learn about security best practices</p>
+            </a>
+        `;
+    }
+}
+
+// Add a function to refresh user session periodically (optional)
+function refreshSession() {
+    if (isLoggedIn()) {
+        const userData = getUserData();
+        if (userData) {
+            // Update login time
+            userData.loginTime = new Date().toISOString();
+
+            // Re-save user data
+            if (localStorage.getItem('quizApp_loggedIn')) {
+                localStorage.setItem('quizApp_user', JSON.stringify(userData));
+            } else {
+                sessionStorage.setItem('quizApp_user', JSON.stringify(userData));
+            }
+        }
+    }
+}
+
+// Call refreshSession function periodically to maintain session
+setInterval(refreshSession, 300000); // Refresh every 5 minutes
