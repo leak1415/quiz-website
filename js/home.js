@@ -76,11 +76,9 @@ function updateAuthUI() {
   const authSection = document.getElementById("auth-section");
   if (!authSection) return;
 
-<<<<<<< HEAD
   if (isLoggedIn()) {
     const userData = getUserData();
     const userMenu = `
-=======
     if (isLoggedIn()) {
         const userData = getUserData();
         // Make links work from both root and /pages/* locations
@@ -90,7 +88,9 @@ function updateAuthUI() {
         const logoutHref = inPagesFolder ? '../auth/logout.html' : 'auth/logout.html';
 
         const userMenu = `
->>>>>>> a471546d53fd464f912c01503bd619520f776ec0
+  if (isLoggedIn()) {
+    const userData = getUserData();
+    const userMenu = `
             <div class="dropdown">
                 <button class="dropbtn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     ${userData?.fullName || userData?.email || "User"}
@@ -103,18 +103,16 @@ function updateAuthUI() {
                 </ul>
             </div>
         `;
-<<<<<<< HEAD
     authSection.innerHTML = userMenu;
   } else {
     authSection.innerHTML = '<a href="auth/login.html">Login</a>';
   }
-=======
+
         authSection.innerHTML = userMenu;
     } else {
         const loginHref = window.location.pathname.includes('/pages/') ? 'login.html' : 'auth/login.html';
         authSection.innerHTML = `<a href="${loginHref}">Login</a>`;
     }
->>>>>>> a471546d53fd464f912c01503bd619520f776ec0
 }
 
 // Update dashboard content with user stats
