@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quiz App</title>
-    <link rel="stylesheet" href="../css/quiz.css" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!-- Navbar -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> Quiz App</title>
+  <link rel="stylesheet" href="../css/quiz.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Navbar -->
     <nav class="navbar" role="navigation" aria-label="Main navigation">
       <div class="logo">
         <img
@@ -50,8 +47,8 @@
             <a href="contact.html">Contact Us</a>
           </div>
         </div>
-        <li id="auth-section">
-          <!-- Will be populated by JavaScript based on login status -->
+        <li>
+          <a href="profile.html">Profile</a>
         </li>
       </ul>
     </nav>
@@ -156,52 +153,12 @@
       </section>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <p>&copy; 2025 CodeWhiz | Built with HTML, CSS & JavaScript</p>
-    </footer>
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 CodeWhiz | Built with HTML, CSS & JavaScript</p>
+  </footer>
 
-    <!-- JavaScript -->
-    <script src="../js/quiz.js"></script>
-    <script>
-      // Update auth UI for quiz page
-      function updateAuthUI() {
-        const authSection = document.getElementById("auth-section");
-        if (!authSection) return;
-
-        function isLoggedIn() {
-          let appData = JSON.parse(localStorage.getItem("quizAppData"));
-          if (!appData) {
-            appData = JSON.parse(sessionStorage.getItem("quizAppData"));
-          }
-          return appData && appData.loggedIn === true;
-        }
-
-        function getUserData() {
-          let appData = JSON.parse(localStorage.getItem("quizAppData"));
-          if (!appData) {
-            appData = JSON.parse(sessionStorage.getItem("quizAppData"));
-          }
-          return appData && appData.currentUser ? appData.currentUser : null;
-        }
-
-        if (isLoggedIn()) {
-          const userData = getUserData();
-          authSection.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 1rem;">
-            <span style="color: white;">Hi, ${
-              userData?.fullName || userData?.email || "User"
-            }</span>
-            <a href="../auth/logout.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: #ff6b6b; border-radius: 4px;">Logout</a>
-          </div>
-        `;
-        } else {
-          authSection.innerHTML =
-            '<a href="../auth/login.html" style="color: white; text-decoration: none;">Login</a>';
-        }
-      }
-
-      document.addEventListener("DOMContentLoaded", updateAuthUI);
-    </script>
-  </body>
+  <!-- JavaScript -->
+  <script src="../js/quiz.js"></script>
+</body>
 </html>

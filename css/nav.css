@@ -1,0 +1,129 @@
+/* -----------------------------
+   Navbar (simple & readable)
+   ----------------------------- */
+.navbar {
+    /* position: fixed; */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: linear-gradient(135deg, #01d6af, #0a33ec);
+    padding: 12px 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+nav {
+    background: linear-gradient(135deg, #01d6af, #0a33ec);
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar .logo img {
+    width: 70px;
+    height: auto;
+}
+
+.navbar .logo p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.navbar .nav-list {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+.navbar .nav-list li {
+    list-style: none;
+}
+
+.navbar .nav-list li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+}
+
+.navbar .nav-list li a:hover {
+    color: #ffd700;
+}
+
+.hamburger {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #fff;
+    padding: 10px;
+    transition: color 0.3s ease;
+}
+
+.hamburger:hover {
+    color: #ffd700;
+}
+
+.drop-down {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.dropbtn:hover {
+    color: #ffd700;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.drop-down:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content.active {
+    display: block;
+}
+
+/* Remove the profile-navbar specific styles since we're using a unified navbar */
+.profile-navbar {
+    display: none; /* This class is not needed with the unified navbar */
+}
