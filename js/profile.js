@@ -2,7 +2,12 @@
 function getUser() {
     let userData = localStorage.getItem('quizApp_user');
     if (!userData) userData = sessionStorage.getItem('quizApp_user');
-    return userData ? JSON.parse(userData) : null;
+    try {
+        return userData ? JSON.parse(userData) : null;
+    } catch (e) {
+        console.error('Error parsing user data:', e);
+        return null;
+    }
 }
 
 function isLoggedIn() {
@@ -29,7 +34,10 @@ if (userNameEl) userNameEl.textContent = user.fullName || user.name || user.emai
 if (userEmailEl) userEmailEl.textContent = user.email || '';
 if (editNameEl) editNameEl.value = user.fullName || user.name || '';
 if (editEmailEl) editEmailEl.value = user.email || '';
-if (userAvatarEl) userAvatarEl.src = user.avatar || '../images/avatar.png';
+if (userAvatarEl) {
+    // Use logo.png as default avatar if no user avatar is set
+    userAvatarEl.src = user.avatar || '../images/logo.png';
+}
 
 // Member since
 const memberSinceEl = document.getElementById('member-since');
@@ -150,7 +158,7 @@ if (removeAvatarBtn) {
     removeAvatarBtn.addEventListener('click', function () {
         if (!confirm('Remove profile picture?')) return;
         delete user.avatar;
-        if (userAvatarEl) userAvatarEl.src = '../images/avatar.png';
+        if (userAvatarEl) userAvatarEl.src = '../images/logo.png'; // Use logo as default
         try {
             persistUser();
             alert('Profile picture removed.');
@@ -194,3 +202,9 @@ function logout() {
     sessionStorage.removeItem('quizApp_loggedIn');
     window.location.href = "../auth/login.html";
 }
+
+// Update UI based on authentication status
+document.addEventListener('DOMContentLoaded', function() {
+    // Update auth section in navbar
+    updateAuthUI();
+});

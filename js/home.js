@@ -9,16 +9,12 @@ function getUserData() {
     if (!userData) {
         userData = sessionStorage.getItem('quizApp_user');
     }
-    return userData ? JSON.parse(userData) : null;
-}
-
-
-function logout() {
-    localStorage.removeItem('quizApp_user');
-    localStorage.removeItem('quizApp_loggedIn');
-    sessionStorage.removeItem('quizApp_user');
-    sessionStorage.removeItem('quizApp_loggedIn');
-    window.location.href = '../index.html';
+    try {
+        return userData ? JSON.parse(userData) : null;
+    } catch (e) {
+        console.error('Error parsing user data:', e);
+        return null;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -47,12 +43,59 @@ document.addEventListener('DOMContentLoaded', function () {
         const ctaButton = document.getElementById('cta-button');
         if (ctaButton) {
             ctaButton.textContent = 'Sign In to Continue';
-            ctaButton.href = 'auth/login.html';
+
+            // Determine the correct path for login based on current location
+            const currentPath = window.location.pathname;
+            let loginPath = './auth/login.html';
+
+            if (currentPath.includes('/pages/')) {
+                loginPath = '../auth/login.html';
+            } else if (currentPath.includes('/auth/')) {
+                loginPath = './login.html'; // If already in auth directory
+            }
+
+            ctaButton.href = loginPath;
         }
     }
 
-    // Remove the logout button event listener since we're now using direct links to the logout page
-    // The logout link in the dropdown now directly goes to auth/logout.html
+    // Toggle mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const navList = document.getElementById('nav-list');
+
+    if (hamburger && navList) {
+        hamburger.addEventListener('click', () => {
+            navList.classList.toggle('active');
+            const isExpanded = navList.classList.contains('active');
+            hamburger.setAttribute('aria-expanded', isExpanded);
+        });
+    }
+
+    // Toggle dropdown on mobile
+    const dropDown = document.querySelector('.drop-down');
+    const dropContent = document.querySelector('.dropdown-content');
+
+    if (dropDown && dropContent) {
+        dropDown.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                e.preventDefault();
+                dropContent.classList.toggle('active');
+            }
+        });
+    }
+
+    // Highlight active link
+    const currentPath = window.location.pathname.split('/').pop();
+    const links = document.querySelectorAll('.nav-list .nav-link');
+
+    links.forEach(link => {
+        const linkPath = link.getAttribute('href') ? link.getAttribute('href').split('/').pop() : '';
+        // Compare paths, treating empty path as index.html
+        const normalizedCurrentPath = currentPath || 'index.html';
+        const normalizedLinkPath = linkPath || 'index.html';
+        if (normalizedLinkPath === normalizedCurrentPath) {
+            link.classList.add('active');
+        }
+    });
 });
 
 // Update UI based on authentication status
@@ -62,13 +105,6 @@ function updateAuthUI() {
 
     if (isLoggedIn()) {
         const userData = getUserData();
-<<<<<<< HEAD
-        // Make links work from both root and /pages/* locations
-        const inPagesFolder = window.location.pathname.includes('/pages/');
-        const profileHref = inPagesFolder ? 'profile.html' : 'pages/profile.html';
-        const resultsHref = inPagesFolder ? 'results.html' : 'pages/results.html';
-        const logoutHref = inPagesFolder ? '../auth/logout.html' : 'auth/logout.html';
-=======
 
         // Determine the correct path prefix based on current page location
         const currentPath = window.location.pathname;
@@ -81,7 +117,6 @@ function updateAuthUI() {
         } else {
             pathPrefix = './'; // If we're in root, stay at current level
         }
->>>>>>> feature/develop
 
         const userMenu = `
             <div class="dropdown">
@@ -89,26 +124,15 @@ function updateAuthUI() {
                     ${userData?.fullName || userData?.email || 'User'}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-<<<<<<< HEAD
-                    <li><a class="dropdown-item" href="${profileHref}"><i class="fas fa-user me-2"></i>Profile</a></li>
-                    <li><a class="dropdown-item" href="${resultsHref}"><i class="fas fa-trophy me-2"></i>My Results</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="${logoutHref}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-=======
                     <li><a class="dropdown-item" href="${pathPrefix}pages/profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
-                    <li><a class="dropdown-item" href="${pathPrefix}pages/results.html"><i class="fas fa-trophy me-2"></i>My Results</a></li>
+                    <li><a class="dropdown-item" href="${pathPrefix}pages/result.html"><i class="fas fa-trophy me-2"></i>My Results</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="${pathPrefix}auth/logout.html"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
->>>>>>> feature/develop
                 </ul>
             </div>
         `;
         authSection.innerHTML = userMenu;
     } else {
-<<<<<<< HEAD
-        const loginHref = window.location.pathname.includes('/pages/') ? 'login.html' : 'auth/login.html';
-        authSection.innerHTML = `<a href="${loginHref}">Login</a>`;
-=======
         // Determine the correct path for login based on current location
         const currentPath = window.location.pathname;
         let loginPath = './auth/login.html';
@@ -120,7 +144,6 @@ function updateAuthUI() {
         }
 
         authSection.innerHTML = `<a href="${loginPath}">Login</a>`;
->>>>>>> feature/develop
     }
 }
 
@@ -204,41 +227,6 @@ function updateDashboardContent(userData) {
     }
 }
 
-// Toggle mobile menu
-const hamburger = document.getElementById('hamburger');
-const navList = document.getElementById('nav-list');
-
-if (hamburger && navList) {
-    hamburger.addEventListener('click', () => {
-        navList.classList.toggle('active');
-        const isExpanded = navList.classList.contains('active');
-        hamburger.setAttribute('aria-expanded', isExpanded);
-    });
-}
-
-// Toggle dropdown on mobile
-const dropDown = document.querySelector('.drop-down');
-const dropContent = document.querySelector('.dropdown-content');
-
-if (dropDown && dropContent) {
-    dropDown.addEventListener('click', (e) => {
-        if (window.innerWidth <= 768) {
-            e.preventDefault();
-            dropContent.classList.toggle('active');
-        }
-    });
-}
-
-// Highlight active link
-const currentPath = window.location.pathname.split('/').pop();
-const links = document.querySelectorAll('.nav-list .nav-link');
-
-links.forEach(link => {
-    if (link.getAttribute('href') === currentPath) {
-        link.classList.add('active');
-    }
-});
-
 // Add a function to refresh user session periodically (optional)
 function refreshSession() {
     if (isLoggedIn()) {
@@ -256,3 +244,6 @@ function refreshSession() {
         }
     }
 }
+
+// Call refreshSession function periodically to maintain session
+setInterval(refreshSession, 300000); // Refresh every 5 minutes
