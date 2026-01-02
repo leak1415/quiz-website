@@ -166,6 +166,7 @@ const quizzes = {
     {
       question: "What is the output of: System.out.println(10 + 20);",
       choices: ["Error", "30", "1020", "None"],
+
       answer: 1,
     },
   ],
@@ -240,7 +241,7 @@ const subjectInfo = {
   },
   java: {
     name: "Java",
-    emoji: "☕",
+    emoji: "☕️",
     description: "Master Java programming basics and concepts!",
   },
 };
@@ -322,6 +323,7 @@ $("admin-quiz-type").onchange = function () {
   adminQuizType = this.value;
 };
 
+
 function addAdminMultipleChoiceQuestion() {
   adminQuestionCount++;
   const questionDiv = document.createElement("div");
@@ -374,6 +376,7 @@ function addAdminTrueFalseQuestion() {
   `;
   $("admin-questions-container").appendChild(questionDiv);
 }
+
 
 function addAdminCheckboxQuestion() {
   adminQuestionCount++;
@@ -456,6 +459,7 @@ $("admin-submit-quiz-btn").onclick = () => {
         .map((input) => input.value)
         .filter((c) => c);
       const answer = parseInt(div.querySelector(".answer-select").value);
+
 
       if (choices.length >= 2 && answer !== "" && !isNaN(answer)) {
         adminQuestions.push({
@@ -588,6 +592,7 @@ function loadQuestion() {
       label.style.display = "flex";
       label.style.alignItems = "center";
       label.style.gap = "10px";
+
 
       const input = document.createElement("input");
       input.type = "radio";

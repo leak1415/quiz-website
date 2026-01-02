@@ -59,26 +59,35 @@
       <!-- Celebration Overlay -->
       <div id="celebration-overlay"></div>
 
-    <!-- Main Menu Screen -->
-    <section id="main-menu" class="screen active">
-      <h1>Welcome to the Quiz App</h1>
-      <p>Choose how you want to proceed:</p>
-      <button id="choose-subject-btn" class="btn primary large">Choose Subject</button>
-      <button id="create-quiz-btn" class="btn secondary large">Create Your Own Quiz</button>
-    </section>
+      <!-- Main Menu Screen -->
+      <section id="main-menu" class="screen active">
+        <h1>CodeWhiz Quiz</h1>
+        <p>Choose how you want to proceed:</p>
+        <button id="choose-subject-btn" class="btn primary large">
+          Choose Subject
+        </button>
+        <button id="admin-quiz-btn" class="btn secondary large">
+          Admin Quiz
+        </button>
+      </section>
 
-    <!-- Subject Selection Screen -->
-    <section id="subject-selection" class="screen">
-      <h1>Choose a Subject</h1>
-      <div id="subject-buttons" class="subject-grid">
-        <button class="subject-btn" data-subject="web"> Web Development</button>
-        <button class="subject-btn" data-subject="python"> Python</button>
-        <button class="subject-btn" data-subject="math"> Mathematics</button>
-        <button class="subject-btn" data-subject="history"> History</button>
-        <button class="subject-btn" data-subject="java"> Java</button>
-      </div>
-      <button id="back-to-menu-btn" class="btn secondary">Back</button>
-    </section>
+      <!-- Subject Selection Screen -->
+      <section id="subject-selection" class="screen">
+        <h1>Choose a Subject</h1>
+        <div id="subject-buttons" class="subject-grid">
+          <button class="subject-btn" data-subject="web">
+            🌐 Web Development
+          </button>
+          <button class="subject-btn" data-subject="python">🐍 Python</button>
+          <button class="subject-btn" data-subject="math">
+            🔢 Mathematics
+          </button>
+          <button class="subject-btn" data-subject="history">📚 History</button>
+          <button class="subject-btn" data-subject="java">☕️ Java</button>
+        </div>
+        <button id="back-to-menu-btn" class="btn secondary">Back</button>
+      </section>
+
 
       <!-- Admin Quiz Screen -->
       <section id="admin-quiz" class="screen">
@@ -94,11 +103,11 @@
           <div class="quiz-type-selector">
             <select id="admin-quiz-type" class="input-field">
               <option value="">Select Quiz Type</option>
-              <option value="web"> Web Development</option>
-              <option value="python">Python</option>
-              <option value="math"> Mathematics</option>
-              <option value="history"> History</option>
-              <option value="java"> Java</option>
+              <option value="web">🌐 Web Development</option>
+              <option value="python">🐍 Python</option>
+              <option value="math">🔢 Mathematics</option>
+              <option value="history">📚 History</option>
+              <option value="java">☕️ Java</option>
             </select>
           </div>
           
@@ -148,11 +157,12 @@
         </div>
         <div class="quiz-header">
           <h2 id="question-title">Question title</h2>
-          <div id="timer">⏱ <span id="time-left">20</span>s</div>
+          <div id="timer">⏱️ <span id="time-left">20</span>s</div>
         </div>
         <form id="quiz-form"></form>
         <button id="next-btn" class="btn secondary">Next</button>
       </section>
+
 
       <!-- Result Screen -->
       <section id="result" class="screen">
