@@ -20,23 +20,12 @@ function confirmLogout() {
 }
 
 function performLogout() {
-  // Update logout status in both storages
-  let appData = JSON.parse(localStorage.getItem("quizAppData"));
-  if (appData) {
-    appData.loggedIn = false;
-    appData.currentUser = null;
-    localStorage.setItem("quizAppData", JSON.stringify(appData));
-  }
-
-  let sessionData = JSON.parse(sessionStorage.getItem("quizAppData"));
-  if (sessionData) {
-    sessionData.loggedIn = false;
-    sessionData.currentUser = null;
-    sessionStorage.setItem("quizAppData", JSON.stringify(sessionData));
-  }
-
+  // Update logout status in unified localStorage
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
+  appData.loggedIn = false;
+  appData.currentUser = null;
+  localStorage.setItem("quizAppData", JSON.stringify(appData));
   localStorage.removeItem("quizApp_remember");
-  sessionStorage.removeItem("quizApp_remember");
 
   // Show success message
   showNotification("You have been successfully logged out.", "success");
@@ -57,17 +46,11 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function isLoggedIn() {
-  let appData = JSON.parse(localStorage.getItem("quizAppData"));
-  if (!appData) {
-    appData = JSON.parse(sessionStorage.getItem("quizAppData"));
-  }
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
   return appData && appData.loggedIn === true;
 }
 
 function getUserData() {
-  let appData = JSON.parse(localStorage.getItem("quizAppData"));
-  if (!appData) {
-    appData = JSON.parse(sessionStorage.getItem("quizAppData"));
-  }
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
   return appData && appData.currentUser ? appData.currentUser : null;
 }

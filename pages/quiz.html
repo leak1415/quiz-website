@@ -1,22 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz</title>
-    <!-- Bootstrap 5.3.0 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome 6.0.0 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> Quiz App</title>
+  <link rel="stylesheet" href="../css/quiz.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet" />
 </head>
-<link rel="icon" type="image/png" href="./images/logo.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-<link rel="stylesheet" href="../css/quiz.css">
-<link rel="stylesheet" href="../css/home.css">
-<link rel="stylesheet" href="../css/footer.css">
-</head>
-
 <body>
+  <!-- Navbar -->
     <nav class="navbar" role="navigation" aria-label="Main navigation">
       <div class="logo">
         <img
@@ -55,112 +47,88 @@
             <a href="contact.html">Contact Us</a>
           </div>
         </div>
-        <li id="auth-section">
-          <!-- Will be populated by JavaScript based on login status -->
+        <li>
+          <a href="profile.html">Profile</a>
         </li>
       </ul>
     </nav>
 
-    <!-- App Container -->
-    <div class="app-container">
-      <!-- Celebration Overlay -->
-      <div id="celebration-overlay"></div>
+  <!-- App Container -->
+  <div class="app-container">
+    <!-- Celebration Overlay -->
+    <div id="celebration-overlay"></div>
 
-      <!-- Main Menu Screen -->
-      <section id="main-menu" class="screen active">
-        <h1>CodeWhiz Quiz</h1>
-        <p>Choose how you want to proceed:</p>
-        <button id="choose-subject-btn" class="btn primary large">
-          Choose Subject
-        </button>
-        <button id="create-quiz-btn" class="btn secondary large">
-          Create Your Own Quiz
-        </button>
-      </section>
+    <!-- Main Menu Screen -->
+    <section id="main-menu" class="screen active">
+      <h1>Welcome to the Quiz App</h1>
+      <p>Choose how you want to proceed:</p>
+      <button id="choose-subject-btn" class="btn primary large">Choose Subject</button>
+      <button id="create-quiz-btn" class="btn secondary large">Create Your Own Quiz</button>
+    </section>
 
-      <!-- Subject Selection Screen -->
-      <section id="subject-selection" class="screen">
-        <h1>Choose a Subject</h1>
-        <div id="subject-buttons" class="subject-grid">
-          <button class="subject-btn" data-subject="web">
-            🌐 Web Development
-          </button>
-          <button class="subject-btn" data-subject="python">🐍 Python</button>
-          <button class="subject-btn" data-subject="math">
-            🔢 Mathematics
-          </button>
-          <button class="subject-btn" data-subject="history">📚 History</button>
-          <button class="subject-btn" data-subject="java">☕ Java</button>
-        </div>
-        <button id="back-to-menu-btn" class="btn secondary">Back</button>
-      </section>
+    <!-- Subject Selection Screen -->
+    <section id="subject-selection" class="screen">
+      <h1>Choose a Subject</h1>
+      <div id="subject-buttons" class="subject-grid">
+        <button class="subject-btn" data-subject="web"> Web Development</button>
+        <button class="subject-btn" data-subject="python"> Python</button>
+        <button class="subject-btn" data-subject="math"> Mathematics</button>
+        <button class="subject-btn" data-subject="history"> History</button>
+        <button class="subject-btn" data-subject="java"> Java</button>
+      </div>
+      <button id="back-to-menu-btn" class="btn secondary">Back</button>
+    </section>
 
-      <!-- Create Quiz Screen -->
-      <section id="create-quiz" class="screen">
-        <h1>Create Your Own Quiz</h1>
-        <div id="quiz-builder">
-          <input
-            type="text"
-            id="quiz-title"
-            placeholder="Quiz Title"
-            class="input-field"
-          />
-          <div id="questions-container"></div>
-          <button id="add-question-btn" class="btn secondary">
-            Add Question
-          </button>
-          <button id="submit-custom-quiz-btn" class="btn primary">
-            Start Quiz
-          </button>
-        </div>
-        <button id="back-to-menu-btn2" class="btn secondary">Back</button>
-      </section>
+    <!-- Create Quiz Screen -->
+    <section id="create-quiz" class="screen">
+      <h1>Create Your Own Quiz</h1>
+      <div id="quiz-builder">
+        <input type="text" id="quiz-title" placeholder="Quiz Title" class="input-field">
+        <div id="questions-container"></div>
+        <button id="add-question-btn" class="btn secondary">Add Question</button>
+        <button id="submit-custom-quiz-btn" class="btn primary">Start Quiz</button>
+      </div>
+      <button id="back-to-menu-btn2" class="btn secondary">Back</button>
+    </section>
 
-      <!-- Instructions Screen -->
-      <section id="instructions" class="screen">
-        <div
-          id="subject-header"
-          style="text-align: center; margin-bottom: 1.5rem"
-        >
-          <h1 id="subject-title">Quiz Instructions</h1>
-          <p id="subject-emoji" style="font-size: 2rem; margin: 0.5rem 0"></p>
-        </div>
-        <p id="quiz-description">
-          This quiz includes 5 questions. You have 20 seconds per question. Good
-          luck!
-        </p>
-        <button id="start-btn" class="btn primary">Start Quiz</button>
-        <button id="back-from-instructions" class="btn secondary">Back</button>
-      </section>
+    <!-- Instructions Screen -->
+    <section id="instructions" class="screen">
+      <div id="subject-header" style="text-align: center; margin-bottom: 1.5rem;">
+        <h1 id="subject-title">Quiz Instructions</h1>
+        <p id="subject-emoji" style="font-size: 2rem; margin: 0.5rem 0;"></p>
+      </div>
+      <p id="quiz-description">This quiz includes 5 questions. You have 20 seconds per question. Good luck!</p>
+      <button id="start-btn" class="btn primary">Start Quiz</button>
+      <button id="back-from-instructions" class="btn secondary">Back</button>
+    </section>
 
-      <!-- Quiz Screen -->
-      <section id="quiz" class="screen">
-        <div class="progress-bar-container">
-          <div id="progress-bar" class="progress-bar">0%</div>
-        </div>
-        <div style="text-align: center; margin-bottom: 1rem">
-          <h3
-            id="current-subject"
-            style="color: var(--primary-color); margin: 0"
-          ></h3>
-        </div>
-        <div class="quiz-header">
-          <h2 id="question-title">Question title</h2>
-          <div id="timer">⏱ <span id="time-left">20</span>s</div>
-        </div>
-        <form id="quiz-form"></form>
-        <button id="next-btn" class="btn secondary">Next</button>
-      </section>
 
-      <!-- Result Screen -->
-      <section id="result" class="screen">
-        <h2>Quiz Complete!</h2>
-        <p id="final-score"></p>
-        <div id="celebration-message"></div>
-        <button id="restart-btn" class="btn primary">Restart</button>
-      </section>
-    </div>
+    <!-- Quiz Screen -->
+    <section id="quiz" class="screen">
+      <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar">0%</div>
+      </div>
+      <div style="text-align: center; margin-bottom: 1rem;">
+        <h3 id="current-subject" style="color: var(--primary-color); margin: 0;"></h3>
+      </div>
+      <div class="quiz-header">
+        <h2 id="question-title">Question title</h2>
+        <div id="timer">⏱️ <span id="time-left">20</span>s</div>
+      </div>
+      <form id="quiz-form"></form>
+      <button id="next-btn" class="btn secondary">Next</button>
+    </section>
 
+    <!-- Result Screen -->
+    <section id="result" class="screen">
+      <h2>Quiz Complete!</h2>
+      <p id="final-score"></p>
+      <div id="celebration-message"></div>
+      <button id="restart-btn" class="btn primary">Restart</button>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -214,9 +182,7 @@
         </div>
     </footer>
 
-
   <!-- JavaScript -->
   <script src="../js/quiz.js"></script>
 </body>
 </html>
-

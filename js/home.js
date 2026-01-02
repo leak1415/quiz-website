@@ -1,37 +1,20 @@
 // Global authentication functions needed for the home page
 function isLoggedIn() {
-  let appData = JSON.parse(localStorage.getItem("quizAppData"));
-  if (!appData) {
-    appData = JSON.parse(sessionStorage.getItem("quizAppData"));
-  }
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
   return appData && appData.loggedIn === true;
 }
 
 function getUserData() {
-  let appData = JSON.parse(localStorage.getItem("quizAppData"));
-  if (!appData) {
-    appData = JSON.parse(sessionStorage.getItem("quizAppData"));
-  }
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
   return appData && appData.currentUser ? appData.currentUser : null;
 }
 
 function logout() {
-  let appData = JSON.parse(localStorage.getItem("quizAppData"));
-  if (appData) {
-    appData.loggedIn = false;
-    appData.currentUser = null;
-    localStorage.setItem("quizAppData", JSON.stringify(appData));
-  }
-
-  let sessionData = JSON.parse(sessionStorage.getItem("quizAppData"));
-  if (sessionData) {
-    sessionData.loggedIn = false;
-    sessionData.currentUser = null;
-    sessionStorage.setItem("quizAppData", JSON.stringify(sessionData));
-  }
-
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
+  appData.loggedIn = false;
+  appData.currentUser = null;
+  localStorage.setItem("quizAppData", JSON.stringify(appData));
   localStorage.removeItem("quizApp_remember");
-  sessionStorage.removeItem("quizApp_remember");
   window.location.href = "../index.html";
 }
 
@@ -96,15 +79,17 @@ function updateAuthUI() {
   const authSection = document.getElementById("auth-section");
   if (!authSection) return;
 
-    if (isLoggedIn()) {
-        const userData = getUserData();
-        // Make links work from both root and /pages/* locations
-        const inPagesFolder = window.location.pathname.includes('/pages/');
-        const profileHref = inPagesFolder ? 'profile.html' : 'pages/profile.html';
-        const resultsHref = inPagesFolder ? 'results.html' : 'pages/results.html';
-        const logoutHref = inPagesFolder ? '../auth/logout.html' : 'auth/logout.html';
+  if (isLoggedIn()) {
+    const userData = getUserData();
+    // Make links work from both root and /pages/* locations
+    const inPagesFolder = window.location.pathname.includes("/pages/");
+    const profileHref = inPagesFolder ? "profile.html" : "pages/profile.html";
+    const resultsHref = inPagesFolder ? "results.html" : "pages/results.html";
+    const logoutHref = inPagesFolder
+      ? "../auth/logout.html"
+      : "auth/logout.html";
 
-        const userMenu = `
+    const userMenu = `
             <div class="dropdown">
                 <button class="dropbtn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     ${userData?.fullName || userData?.email || "User"}
@@ -117,11 +102,13 @@ function updateAuthUI() {
                 </ul>
             </div>
         `;
-        authSection.innerHTML = userMenu;
-    } else {
-        const loginHref = window.location.pathname.includes('/pages/') ? 'login.html' : 'auth/login.html';
-        authSection.innerHTML = `<a href="${loginHref}">Login</a>`;
-    }
+    authSection.innerHTML = userMenu;
+  } else {
+    const loginHref = window.location.pathname.includes("/pages/")
+      ? "login.html"
+      : "auth/login.html";
+    authSection.innerHTML = `<a href="${loginHref}">Login</a>`;
+  }
 }
 
 // Update dashboard content with user stats
@@ -232,18 +219,10 @@ function refreshSession() {
       // Update login time
       userData.loginTime = new Date().toISOString();
 
-      // Re-save user data
-      let appData = JSON.parse(localStorage.getItem("quizAppData"));
-      if (appData) {
-        appData.currentUser = userData;
-        localStorage.setItem("quizAppData", JSON.stringify(appData));
-      } else {
-        let sessionData = JSON.parse(sessionStorage.getItem("quizAppData"));
-        if (sessionData) {
-          sessionData.currentUser = userData;
-          sessionStorage.setItem("quizAppData", JSON.stringify(sessionData));
-        }
-      }
+      // Re-save user data to unified localStorage
+      const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
+      appData.currentUser = userData;
+      localStorage.setItem("quizAppData", JSON.stringify(appData));
     }
   }
 }

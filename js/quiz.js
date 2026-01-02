@@ -1,17 +1,11 @@
 // Authentication check functions
 function isLoggedIn() {
-  let appData = JSON.parse(localStorage.getItem("quizAppData"));
-  if (!appData) {
-    appData = JSON.parse(sessionStorage.getItem("quizAppData"));
-  }
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
   return appData && appData.loggedIn === true;
 }
 
 function getUserData() {
-  let appData = JSON.parse(localStorage.getItem("quizAppData"));
-  if (!appData) {
-    appData = JSON.parse(sessionStorage.getItem("quizAppData"));
-  }
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
   return appData && appData.currentUser ? appData.currentUser : null;
 }
 
