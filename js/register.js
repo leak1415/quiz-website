@@ -63,16 +63,42 @@ function register(event) {
   appData.users = users;
   localStorage.setItem("quizAppData", JSON.stringify(appData));
 
+  // Determine the correct path based on current location
+  const currentPath = window.location.pathname;
+  let redirectPath = './auth/login.html'; // Default
+
+  if (currentPath.includes('/auth/')) {
+      redirectPath = './login.html'; // Already in auth directory
+  } else {
+      redirectPath = './auth/login.html'; // Need to go to auth directory
+  }
+
   alert("Registration successful! You can now login.");
-  window.location.href = "login.html";
+  window.location.href = redirectPath;
 }
 
 // Real-time form validation
-document.addEventListener("DOMContentLoaded", function () {
-  const fullNameInput = document.getElementById("fullName");
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
-  const confirmPasswordInput = document.getElementById("confirmPassword");
+document.addEventListener('DOMContentLoaded', function () {
+    // Check if user is already logged in and redirect if needed
+    const loggedIn = localStorage.getItem('quizApp_loggedIn') || sessionStorage.getItem('quizApp_loggedIn');
+    if (loggedIn === "true") {
+        // Determine the correct redirect path
+        const currentPath = window.location.pathname;
+        let redirectPath = '../index.html'; // Default to go up one level from auth directory
+
+        if (currentPath.includes('/auth/')) {
+            redirectPath = '../index.html'; // From auth directory to root index
+        } else {
+            redirectPath = './index.html'; // If already in root
+        }
+
+        window.location.href = redirectPath;
+    }
+
+    const fullNameInput = document.getElementById('fullName');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
 
   if (fullNameInput) {
     fullNameInput.addEventListener("input", function () {

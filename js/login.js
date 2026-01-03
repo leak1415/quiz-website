@@ -21,13 +21,12 @@ function login(event) {
     users: [],
     leaderboard: [],
     currentUser: null,
+    loggedIn: false,
   };
 
   const users = appData.users || [];
   // Check if user exists (using hashed password comparison)
-  const user = users.find(
-    (u) => u.email === email && u.password === hashPassword(password)
-  );
+  const user = appData.users.find(u => u.email === email && u.password === hashPassword(password));
 
   if (!user) {
     alert("Invalid email or password");
@@ -39,19 +38,22 @@ function login(event) {
     id: user.id,
     fullName: user.fullName,
     email: user.email,
-    loginTime: new Date().toISOString(),
+    createdAt: user.createdAt || new Date().toISOString(),
+    quizzesTaken: user.quizzesTaken || 0,
+    successRate: user.successRate || "0%",
+    totalScore: user.totalScore || 0,
+    avgScore: user.avgScore || 0,
+    totalQuestions: user.totalQuestions || 0,
+    totalCorrect: user.totalCorrect || 0,
+    ranking: user.ranking || 0,
+    loginTime: new Date().toISOString()
   };
 
   appData.currentUser = loginData;
   appData.loggedIn = true;
 
-  if (remember) {
-    localStorage.setItem("quizAppData", JSON.stringify(appData));
-    localStorage.setItem("quizApp_remember", "true");
-  } else {
-    sessionStorage.setItem("quizAppData", JSON.stringify(appData));
-    sessionStorage.setItem("quizApp_remember", "false");
-  }
+  // Always persist to localStorage (single source of truth)
+  localStorage.setItem("quizAppData", JSON.stringify(appData));
 
   // Show success message and redirect
   alert("Login successful!");
@@ -75,10 +77,12 @@ function getUserData() {
 }
 
 function logout() {
-  localStorage.removeItem("quizApp_user");
-  localStorage.removeItem("quizApp_loggedIn");
-  sessionStorage.removeItem("quizApp_user");
-  sessionStorage.removeItem("quizApp_loggedIn");
+  // Clear login state in unified storage
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
+  appData.loggedIn = false;
+  appData.currentUser = null;
+  localStorage.setItem("quizAppData", JSON.stringify(appData));
+  localStorage.removeItem("quizApp_remember");
   window.location.href = "auth/login.html";
 }
 

@@ -1,3 +1,199 @@
+// Authentication check functions
+function isLoggedIn() {
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
+  return appData && appData.loggedIn === true;
+}
+
+function getUserData() {
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
+  return appData && appData.currentUser ? appData.currentUser : null;
+}
+
+// Check if user is logged in when page loads
+document.addEventListener("DOMContentLoaded", function () {
+  if (!isLoggedIn()) {
+    alert("Please login first to access the quiz!");
+    window.location.href = "../auth/login.html";
+    return;
+  }
+
+  // Main Menu Navigation
+  const chooseSubjectBtn = document.getElementById("choose-subject-btn");
+  if (chooseSubjectBtn) {
+    chooseSubjectBtn.onclick = () => {
+      document.getElementById("main-menu").classList.remove("active");
+      document.getElementById("subject-selection").classList.add("active");
+    };
+  }
+
+  const createQuizBtn = document.getElementById("create-quiz-btn");
+  if (createQuizBtn) {
+    createQuizBtn.onclick = () => {
+      document.getElementById("main-menu").classList.remove("active");
+      document.getElementById("create-quiz").classList.add("active");
+      initializeQuizBuilder();
+    };
+  }
+
+  // Back buttons
+  const backToMenuBtn = document.getElementById("back-to-menu-btn");
+  if (backToMenuBtn) {
+    backToMenuBtn.onclick = () => {
+      document.getElementById("subject-selection").classList.remove("active");
+      document.getElementById("main-menu").classList.add("active");
+    };
+  }
+
+  const backToMenuBtn2 = document.getElementById("back-to-menu-btn2");
+  if (backToMenuBtn2) {
+    backToMenuBtn2.onclick = () => {
+      document.getElementById("create-quiz").classList.remove("active");
+      document.getElementById("main-menu").classList.add("active");
+    };
+  }
+
+  const backFromInstructions = document.getElementById("back-from-instructions");
+  if (backFromInstructions) {
+    backFromInstructions.onclick = () => {
+      document.getElementById("instructions").classList.remove("active");
+      document.getElementById("main-menu").classList.add("active");
+    };
+  }
+
+  // Subject Selection
+  document.querySelectorAll(".subject-btn").forEach((btn) => {
+    btn.onclick = (e) => {
+      const subject = e.target.dataset.subject;
+      selectedSubject = subject;
+      const info = subjectInfo[subject];
+      questions = JSON.parse(JSON.stringify(quizzes[subject]));
+      current = 0;
+      score = 0;
+      customQuizMode = false;
+      document.getElementById("subject-title").textContent = `${info.name} Quiz`;
+      document.getElementById("subject-emoji").textContent = info.emoji;
+      document.getElementById("quiz-description").textContent = `${info.description} This quiz includes ${questions.length} questions. You have 20 seconds per question. Good luck!`;
+      document.getElementById("subject-selection").classList.remove("active");
+      document.getElementById("instructions").classList.add("active");
+    };
+  });
+
+  // Quiz Builder
+  const addQuestionBtn = document.getElementById("add-question-btn");
+  if (addQuestionBtn) {
+    addQuestionBtn.onclick = () => {
+      addQuestionInput();
+    };
+  }
+
+  const submitCustomQuizBtn = document.getElementById("submit-custom-quiz-btn");
+  if (submitCustomQuizBtn) {
+    submitCustomQuizBtn.onclick = () => {
+      const title = document.getElementById("quiz-title").value || "Custom Quiz";
+      const questionDivs = document.querySelectorAll(".question-input");
+      const customQuestions = [];
+
+      questionDivs.forEach((div) => {
+        const questionText = div.querySelector(".question-text").value;
+        const questionType = div.querySelector(".question-type").value;
+
+        if (!questionText) return; // Skip if no question text
+
+        let questionObj = {
+          question: questionText,
+          type: questionType,
+        };
+
+        if (questionType === "multiple") {
+          // Multiple choice question
+          const choicesInputs = div.querySelectorAll(".choice");
+          const choices = Array.from(choicesInputs).map((input) => input.value);
+          const answer = parseInt(div.querySelector(".answer-select").value);
+
+          if (choices.every((c) => c) && answer !== "") {
+            questionObj.choices = choices;
+            questionObj.answer = answer;
+            customQuestions.push(questionObj);
+          }
+        } else if (questionType === "trueFalse") {
+          // True/False question
+          const answer = div.querySelector(".trueFalse-answer").value;
+
+          if (answer !== "") {
+            questionObj.choices = ["True", "False"];
+            questionObj.answer = answer === "true" ? 0 : 1;
+            customQuestions.push(questionObj);
+          }
+        } else if (questionType === "checkbox") {
+          // Checkbox question (multiple correct answers)
+          const checkboxChoices = div.querySelectorAll(".checkbox-choice");
+          const checkboxCorrects = div.querySelectorAll(".checkbox-correct");
+          const choices = Array.from(checkboxChoices).map((input) => input.value);
+          const correctAnswers = Array.from(checkboxCorrects)
+            .map((checkbox, index) => (checkbox.checked ? index : -1))
+            .filter((i) => i !== -1);
+
+          if (choices.every((c) => c) && correctAnswers.length > 0) {
+            questionObj.choices = choices;
+            questionObj.answer = correctAnswers; // Array of correct answer indices
+            customQuestions.push(questionObj);
+          }
+        }
+      });
+
+      if (customQuestions.length === 0) {
+        alert("Please fill in at least one complete question!");
+        return;
+      }
+
+      questions = customQuestions;
+      current = 0;
+      score = 0;
+      customQuizMode = true;
+      document.getElementById("quiz-description").textContent = `Custom Quiz: ${title}. ${questions.length} questions, 20 seconds each. Good luck!`;
+      document.getElementById("create-quiz").classList.remove("active");
+      document.getElementById("instructions").classList.add("active");
+    };
+  }
+
+  // Event listeners for quiz navigation
+  const startBtn = document.getElementById("start-btn");
+  if (startBtn) {
+    startBtn.onclick = () => {
+      document.getElementById("instructions").classList.remove("active");
+      document.getElementById("quiz").classList.add("active");
+      loadQuestion();
+    };
+  }
+
+  const nextBtn = document.getElementById("next-btn");
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      clearInterval(timer);
+      checkAnswer();
+      showFeedback(() => nextQuestion());
+    };
+  }
+
+  const restartBtn = document.getElementById("restart-btn");
+  if (restartBtn) {
+    restartBtn.onclick = () => location.reload();
+  }
+
+  const fullscreenBtn = document.getElementById("fullscreen-btn");
+  if (fullscreenBtn) {
+    fullscreenBtn.onclick = () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        document.getElementById("fullscreen-btn").textContent = "✖ Exit Fullscreen";
+      } else {
+        document.exitFullscreen();
+        document.getElementById("fullscreen-btn").textContent = "⛶ Fullscreen";
+      }
+    };
+  }
+});
+
 const quizzes = {
   web: [
     {
@@ -210,6 +406,7 @@ let questions = [
   },
 ];
 
+
 let current = 0,
   score = 0,
   timeLeft = 20,
@@ -217,6 +414,9 @@ let current = 0,
   customQuizMode = false,
   selectedSubject = "",
   adminQuizType = "";
+
+// Add userAnswers array to track user responses
+let userAnswers = [];
 
 const subjectInfo = {
   web: {
@@ -241,7 +441,7 @@ const subjectInfo = {
   },
   java: {
     name: "Java",
-    emoji: "☕️",
+    emoji: "☕",
     description: "Master Java programming basics and concepts!",
   },
 };
@@ -288,9 +488,7 @@ document.querySelectorAll(".subject-btn").forEach((btn) => {
     customQuizMode = false;
     $("subject-title").textContent = `${info.name} Quiz`;
     $("subject-emoji").textContent = info.emoji;
-    $(
-      "quiz-description"
-    ).textContent = `${info.description} This quiz includes ${questions.length} questions. You have 20 seconds per question. Good luck!`;
+    $("quiz-description").textContent = `${info.description} This quiz includes ${questions.length} questions. You have 20 seconds per question. Good luck!`;
     $("subject-selection").classList.remove("active");
     $("instructions").classList.add("active");
   };
@@ -309,13 +507,11 @@ let questionCount = 0;
 let selectedQuestionType = null;
 let adminQuestionCount = 0;
 
-function initializeAdminQuizBuilder() {
-  adminQuestionCount = 0;
-  $("admin-questions-container").innerHTML = "";
-  $("admin-quiz-title").value = "";
-  $("admin-question-type-select").value = "";
-  $("admin-quiz-type").value = "";
-  adminQuizType = "";
+function initializeQuizBuilder() {
+  questionCount = 0;
+  document.getElementById("questions-container").innerHTML = "";
+  document.getElementById("quiz-title").value = "";
+  addQuestionInput();
 }
 
 // Capture admin quiz type selection
@@ -415,6 +611,132 @@ function addAdminCheckboxQuestion() {
 
 function removeAdminQuestion(id) {
   const element = $(id);
+  if (element) {
+    element.remove();
+  }
+}
+
+function initializeQuizBuilder() {
+  questionCount = 0;
+  document.getElementById("questions-container").innerHTML = "";
+  document.getElementById("quiz-title").value = "";
+  addQuestionInput();
+}
+
+function addQuestionInput() {
+  questionCount++;
+  const questionDiv = document.createElement("div");
+  questionDiv.id = `question-${questionCount}`;
+
+  const questionHTML = `
+    <div style="margin-bottom: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 8px;">
+      <h4>Question ${questionCount}</h4>
+      
+      <!-- Question Type Selection -->
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Question Type:</label>
+        <select class="question-type" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+          <option value="multiple">Multiple Choice</option>
+          <option value="trueFalse">True/False</option>
+          <option value="checkbox">Checkbox (Multiple Answers)</option>
+        </select>
+      </div>
+      
+      <!-- Question Text -->
+      <input type="text" class="question-text" placeholder="Enter question text" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+      
+      <!-- Choices Container (Dynamic based on question type) -->
+      <div class="question-type-container" style="margin-bottom: 1rem;">
+        <!-- Multiple Choice Container -->
+        <div class="multiple-choice-container">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Choices:</label>
+          <div class="choices">
+            <input type="text" class="choice" placeholder="Choice 1" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" class="choice" placeholder="Choice 2" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" class="choice" placeholder="Choice 3" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" class="choice" placeholder="Choice 4" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+          </div>
+          <select class="answer-select" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+            <option value="">Select Correct Answer</option>
+            <option value="0">Choice 1</option>
+            <option value="1">Choice 2</option>
+            <option value="2">Choice 3</option>
+            <option value="3">Choice 4</option>
+          </select>
+        </div>
+        
+        <!-- True/False Container (Hidden by default) -->
+        <div class="trueFalse-container" style="display: none;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Correct Answer:</label>
+          <select class="trueFalse-answer" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+            <option value="">Select Correct Answer</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
+        </div>
+        
+        <!-- Checkbox Container (Hidden by default) -->
+        <div class="checkbox-container" style="display: none;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Choices (Check all that are correct):</label>
+          <div class="checkbox-choices">
+            <div style="margin-bottom: 0.5rem;">
+              <input type="text" class="checkbox-choice" placeholder="Choice 1" style="width: calc(100% - 30px); padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="checkbox" class="checkbox-correct" style="margin-left: 0.5rem;" title="Mark as correct">
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+              <input type="text" class="checkbox-choice" placeholder="Choice 2" style="width: calc(100% - 30px); padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="checkbox" class="checkbox-correct" style="margin-left: 0.5rem;" title="Mark as correct">
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+              <input type="text" class="checkbox-choice" placeholder="Choice 3" style="width: calc(100% - 30px); padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="checkbox" class="checkbox-correct" style="margin-left: 0.5rem;" title="Mark as correct">
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+              <input type="text" class="checkbox-choice" placeholder="Choice 4" style="width: calc(100% - 30px); padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="checkbox" class="checkbox-correct" style="margin-left: 0.5rem;" title="Mark as correct">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <button type="button" class="btn secondary" style="margin-top: 0.5rem; width: 100%;" onclick="removeQuestion('question-${questionCount}')">Remove</button>
+    </div>
+  `;
+
+  questionDiv.innerHTML = questionHTML;
+  document.getElementById("questions-container").appendChild(questionDiv);
+
+  // Add event listener for question type change
+  const typeSelect = questionDiv.querySelector(".question-type");
+  typeSelect.addEventListener("change", function () {
+    updateQuestionTypeDisplay(questionDiv, this.value);
+  });
+}
+
+function updateQuestionTypeDisplay(questionDiv, questionType) {
+  const multipleContainer = questionDiv.querySelector(
+    ".multiple-choice-container"
+  );
+  const trueFalseContainer = questionDiv.querySelector(".trueFalse-container");
+  const checkboxContainer = questionDiv.querySelector(".checkbox-container");
+
+  // Hide all containers
+  multipleContainer.style.display = "none";
+  trueFalseContainer.style.display = "none";
+  checkboxContainer.style.display = "none";
+
+  // Show the selected container
+  if (questionType === "multiple") {
+    multipleContainer.style.display = "block";
+  } else if (questionType === "trueFalse") {
+    trueFalseContainer.style.display = "block";
+  } else if (questionType === "checkbox") {
+    checkboxContainer.style.display = "block";
+  }
+}
+
+function removeQuestion(id) {
+  const element = document.getElementById(id);
   if (element) {
     element.remove();
   }
@@ -524,9 +846,7 @@ $("admin-submit-quiz-btn").onclick = () => {
     $("subject-emoji").textContent = "📝";
   }
 
-  $(
-    "quiz-description"
-  ).textContent = `Custom Quiz: ${title}. ${questions.length} questions, 20 seconds each. Good luck!`;
+  $("quiz-description").textContent = `Custom Quiz: ${title}. ${questions.length} questions, 20 seconds each. Good luck!`;
 
   $("admin-quiz").classList.remove("active");
   $("instructions").classList.add("active");
@@ -552,25 +872,23 @@ $("restart-btn").onclick = () => location.reload();
 
 function loadQuestion() {
   timeLeft = 20;
-  $("time-left").textContent = timeLeft;
+  document.getElementById("time-left").textContent = timeLeft;
   const q = questions[current];
-  $("question-title").textContent = `${current + 1}. ${q.question}`;
+  document.getElementById("question-title").textContent = `${current + 1}. ${q.question}`;
 
   // Display subject name in quiz
   if (selectedSubject && subjectInfo[selectedSubject]) {
-    $(
-      "current-subject"
-    ).textContent = `${subjectInfo[selectedSubject].emoji} ${subjectInfo[selectedSubject].name}`;
+    document.getElementById("current-subject").textContent = `${subjectInfo[selectedSubject].emoji} ${subjectInfo[selectedSubject].name}`;
   } else if (customQuizMode) {
-    $("current-subject").textContent = "📝 Custom Quiz";
-  } else {
-    $("current-subject").textContent = "";
+    document.getElementById("current-subject").textContent = "📝 Custom Quiz";
   }
 
-  $("quiz-form").innerHTML = "";
+  document.getElementById("quiz-form").innerHTML = "";
 
-  if (q.type === "checkbox") {
-    // Checkbox type - multiple correct answers
+  const questionType = q.type || "multiple"; // Default to multiple choice for backward compatibility
+
+  if (questionType === "checkbox") {
+    // Checkbox question - multiple correct answers
     q.choices.forEach((choice, i) => {
       const label = document.createElement("label");
       label.style.display = "flex";
@@ -583,16 +901,15 @@ function loadQuestion() {
       input.value = i;
       label.appendChild(input);
       label.append(` ${choice}`);
-      $("quiz-form").appendChild(label);
+      document.getElementById("quiz-form").appendChild(label);
     });
   } else {
-    // Multiple choice or True/False - single correct answer
+    // Radio button for multiple choice and true/false
     q.choices.forEach((choice, i) => {
       const label = document.createElement("label");
       label.style.display = "flex";
       label.style.alignItems = "center";
       label.style.gap = "10px";
-
 
       const input = document.createElement("input");
       input.type = "radio";
@@ -600,7 +917,7 @@ function loadQuestion() {
       input.value = i;
       label.appendChild(input);
       label.append(` ${choice}`);
-      $("quiz-form").appendChild(label);
+      document.getElementById("quiz-form").appendChild(label);
     });
   }
 
@@ -611,7 +928,7 @@ function loadQuestion() {
 function startTimer() {
   timer = setInterval(() => {
     timeLeft--;
-    $("time-left").textContent = timeLeft;
+    document.getElementById("time-left").textContent = timeLeft;
     if (timeLeft <= 0) {
       clearInterval(timer);
       checkAnswer();
@@ -622,20 +939,21 @@ function startTimer() {
 
 function checkAnswer() {
   const q = questions[current];
+  const questionType = q.type || "multiple";
 
-  if (q.type === "checkbox") {
+  if (questionType === "checkbox") {
     // For checkbox questions, check if all correct answers are selected and no incorrect ones
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    const userAnswers = Array.from(checkboxes)
-      .filter((cb) => cb.checked)
-      .map((cb) => parseInt(cb.value));
+    const selectedAnswers = Array.from(checkboxes)
+      .map((checkbox, index) => (checkbox.checked ? index : -1))
+      .filter((i) => i !== -1);
 
-    const correctAnswers = q.answer;
-    const isCorrect =
-      userAnswers.length === correctAnswers.length &&
-      userAnswers.every((ans) => correctAnswers.includes(ans));
+    // Sort both arrays to compare
+    const correctAnswers = Array.isArray(q.answer) ? q.answer.sort((a, b) => a - b) : [];
+    const userAnswers = selectedAnswers.sort((a, b) => a - b);
 
-    if (isCorrect) {
+    // Check if arrays are equal
+    if (JSON.stringify(userAnswers) === JSON.stringify(correctAnswers)) {
       score++;
     }
   } else {
@@ -650,13 +968,12 @@ function checkAnswer() {
 
 function showFeedback(callback) {
   const q = questions[current];
+  const questionType = q.type || "multiple";
   const labels = document.querySelectorAll("#quiz-form label");
-  const correctDiv = document.createElement("div");
-  correctDiv.className = "correct-answer-popup";
 
-  if (q.type === "checkbox") {
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    const correctAnswers = q.answer;
+  if (questionType === "checkbox") {
+    // For checkbox questions
+    const correctAnswers = Array.isArray(q.answer) ? q.answer : [];
 
     labels.forEach((label) => {
       const input = label.querySelector("input");
@@ -670,11 +987,13 @@ function showFeedback(callback) {
       input.disabled = true;
     });
 
-    const correctAnswerText = correctAnswers
-      .map((i) => q.choices[i])
-      .join(", ");
-    correctDiv.innerHTML = `<p>✅ Correct answers: <strong>${correctAnswerText}</strong></p>`;
+    const correctDiv = document.createElement("div");
+    correctDiv.className = "correct-answer-popup";
+    const correctChoices = correctAnswers.map((i) => q.choices[i]).join(", ");
+    correctDiv.innerHTML = `<p>✅ Correct answers: <strong>${correctChoices}</strong></p>`;
+    document.getElementById("quiz-form").appendChild(correctDiv);
   } else {
+    // For multiple choice and true/false
     const correctIndex = q.answer;
 
     labels.forEach((label) => {
@@ -689,13 +1008,17 @@ function showFeedback(callback) {
       input.disabled = true;
     });
 
+    const correctDiv = document.createElement("div");
+    correctDiv.className = "correct-answer-popup";
     correctDiv.innerHTML = `<p>✅ Correct answer: <strong>${q.choices[correctIndex]}</strong></p>`;
+    document.getElementById("quiz-form").appendChild(correctDiv);
   }
 
-  $("quiz-form").appendChild(correctDiv);
-
   setTimeout(() => {
-    correctDiv.remove();
+    const correctDiv = document.getElementById("quiz-form").querySelector(".correct-answer-popup");
+    if (correctDiv) {
+      correctDiv.remove();
+    }
     callback();
   }, 1500);
 }
@@ -711,19 +1034,89 @@ function nextQuestion() {
 
 function updateProgress() {
   const percent = ((current + 1) / questions.length) * 100;
-  $("progress-bar").style.width = `${percent}%`;
-  $("progress-bar").textContent = `${current + 1} / ${questions.length}`;
+  document.getElementById("progress-bar").style.width = `${percent}%`;
+  document.getElementById("progress-bar").textContent = `${current + 1} / ${questions.length}`;
+}
+
+function saveQuizResultToLeaderboard() {
+  // Get logged-in user data
+  const userData = getUserData();
+  const playerName = userData
+    ? userData.fullName || userData.email
+    : "Anonymous";
+
+  const category =
+    selectedSubject && subjectInfo[selectedSubject]
+      ? subjectInfo[selectedSubject].name
+      : customQuizMode
+      ? "Custom Quiz"
+      : "Unknown";
+
+  // Get unified app data
+  let appData = JSON.parse(localStorage.getItem("quizAppData")) || {
+    users: [],
+    leaderboard: [],
+    currentUser: null,
+    loggedIn: false,
+  };
+
+  // Create new entry with user ID for tracking
+  const newEntry = {
+    userId: userData ? userData.id : null,
+    name: playerName,
+    score: score,
+    category: category,
+    totalQuestions: questions.length,
+    date: new Date().toISOString(),
+  };
+
+  // Add to leaderboard and sort
+  appData.leaderboard = appData.leaderboard || [];
+  appData.leaderboard.push(newEntry);
+  appData.leaderboard.sort((a, b) => b.score - a.score);
+
+  // Save back to unified storage
+  localStorage.setItem("quizAppData", JSON.stringify(appData));
 }
 
 function showResult() {
-  $("quiz").classList.remove("active");
-  $("result").classList.add("active");
-  $(
-    "final-score"
-  ).textContent = `You scored ${score} out of ${questions.length}`;
+  document.getElementById("quiz").classList.remove("active");
+  document.getElementById("result").classList.add("active");
+  document.getElementById("final-score").textContent = `You scored ${score} out of ${questions.length}`;
 
-  $("celebration-overlay").style.display = "flex";
-  $("celebration-overlay").textContent =
+  document.getElementById("celebration-overlay").style.display = "flex";
+  document.getElementById("celebration-overlay").textContent =
     score >= 4 ? "🎉 Congratulations!" : "👍 Better Luck Next Time!";
-  setTimeout(() => ($("celebration-overlay").style.display = "none"), 3000);
+  setTimeout(() => (document.getElementById("celebration-overlay").style.display = "none"), 3000);
+
+  // Save result to leaderboard
+  saveQuizResultToLeaderboard();
+  
+  // Add event listener for the view results button
+  const viewResultsBtn = document.getElementById("view-results-btn");
+  if (viewResultsBtn) {
+    viewResultsBtn.onclick = () => {
+      // Store results in sessionStorage for the results page
+      const resultsData = {
+        score: score,
+        totalQuestions: questions.length,
+        correctAnswers: score, // For now, correct answers = score
+        percentage: Math.round((score / questions.length) * 100),
+        questions: questions,
+        userAnswers: userAnswers || [], // Use the userAnswers array we've been tracking
+        category: selectedSubject && subjectInfo[selectedSubject]
+          ? subjectInfo[selectedSubject].name
+          : customQuizMode
+          ? "Custom Quiz"
+          : "Unknown",
+        difficulty: "Medium" // Default difficulty
+      };
+      
+      // Save to sessionStorage
+      sessionStorage.setItem('quizResults', JSON.stringify(resultsData));
+      
+      // Redirect to results page
+      window.location.href = './result.html';
+    };
+  }
 }
