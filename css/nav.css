@@ -2,7 +2,7 @@
    Navbar (simple & readable)
    ----------------------------- */
 .navbar {
-    /* position: fixed; */
+    position: fixed; /* Fixed position as per memory requirements - must not change to relative on mobile */
     top: 0;
     left: 0;
     right: 0;
@@ -10,6 +10,9 @@
     background: linear-gradient(135deg, #01d6af, #0a33ec);
     padding: 12px 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 nav {
@@ -126,4 +129,76 @@ nav {
 /* Remove the profile-navbar specific styles since we're using a unified navbar */
 .profile-navbar {
     display: none; /* This class is not needed with the unified navbar */
+}
+
+/* Responsive adjustments for navigation */
+@media (max-width: 992px) {
+    .hamburger {
+        display: block;
+    }
+
+    .nav-list {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: linear-gradient(135deg, #01d6af, #0a33ec);
+        box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+        padding: 20px 0;
+        z-index: 2000;
+    }
+
+    .nav-list.active {
+        display: flex;
+    }
+    
+    .navbar .nav-list {
+        gap: 0;
+        flex-direction: column;
+    }
+    
+    .navbar .nav-list li a {
+        padding: 12px 20px;
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 10px 15px;
+    }
+    
+    .navbar .logo img {
+        width: 60px;
+    }
+    
+    .navbar .logo p {
+        font-size: 20px;
+    }
+    
+    .hamburger {
+        font-size: 22px;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar {
+        padding: 8px 10px;
+    }
+    
+    .navbar .logo img {
+        width: 50px;
+    }
+    
+    .navbar .logo p {
+        font-size: 18px;
+    }
+    
+    .hamburger {
+        font-size: 20px;
+        padding: 6px;
+    }
 }

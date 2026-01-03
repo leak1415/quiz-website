@@ -24,11 +24,8 @@ function login(event) {
     loggedIn: false,
   };
 
-  const users = appData.users || [];
   // Check if user exists (using hashed password comparison)
-  const user = users.find(
-    (u) => u.email === email && u.password === hashPassword(password)
-  );
+  const user = appData.users.find(u => u.email === email && u.password === hashPassword(password));
 
   if (!user) {
     alert("Invalid email or password");
@@ -40,7 +37,15 @@ function login(event) {
     id: user.id,
     fullName: user.fullName,
     email: user.email,
-    loginTime: new Date().toISOString(),
+    createdAt: user.createdAt || new Date().toISOString(),
+    quizzesTaken: user.quizzesTaken || 0,
+    successRate: user.successRate || "0%",
+    totalScore: user.totalScore || 0,
+    avgScore: user.avgScore || 0,
+    totalQuestions: user.totalQuestions || 0,
+    totalCorrect: user.totalCorrect || 0,
+    ranking: user.ranking || 0,
+    loginTime: new Date().toISOString()
   };
 
   appData.currentUser = loginData;
@@ -72,52 +77,4 @@ function logout() {
   localStorage.setItem("quizAppData", JSON.stringify(appData));
   localStorage.removeItem("quizApp_remember");
   window.location.href = "auth/login.html";
-}
-
-// Form validation in real-time
-document.addEventListener("DOMContentLoaded", function () {
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
-
-  if (emailInput) {
-    emailInput.addEventListener("input", function () {
-      validateEmail(this);
-    });
-  }
-
-  if (passwordInput) {
-    passwordInput.addEventListener("input", function () {
-      validatePassword(this);
-    });
-  }
-});
-
-function validateEmail(inputElement) {
-  const email = inputElement.value.trim();
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (email.length > 0 && !emailRegex.test(email)) {
-    inputElement.classList.add("is-invalid");
-    inputElement.classList.remove("is-valid");
-  } else if (emailRegex.test(email)) {
-    inputElement.classList.add("is-valid");
-    inputElement.classList.remove("is-invalid");
-  } else {
-    inputElement.classList.remove("is-invalid");
-    inputElement.classList.remove("is-valid");
-  }
-}
-
-function validatePassword(inputElement) {
-  const password = inputElement.value;
-  if (password.length > 0 && password.length < 6) {
-    inputElement.classList.add("is-invalid");
-    inputElement.classList.remove("is-valid");
-  } else if (password.length >= 6) {
-    inputElement.classList.add("is-valid");
-    inputElement.classList.remove("is-invalid");
-  } else {
-    inputElement.classList.remove("is-invalid");
-    inputElement.classList.remove("is-valid");
-  }
 }

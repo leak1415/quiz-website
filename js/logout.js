@@ -38,10 +38,10 @@ function performLogout() {
 
 // Check if user is logged in when the page loads
 document.addEventListener("DOMContentLoaded", function () {
-  // Check if user is logged in
+  // Check if user is logged in using the standard function
   if (!isLoggedIn()) {
     // If not logged in, redirect to login page
-    window.location.href = "login.html";
+    window.location.href = "./login.html";
   }
 });
 
