@@ -411,12 +411,16 @@ let questions = [
   },
 ];
 
+
 let current = 0,
   score = 0,
   timeLeft = 20,
   timer,
   customQuizMode = false,
   selectedSubject = "";
+
+// Add userAnswers array to track user responses
+let userAnswers = [];
 
 const subjectInfo = {
   web: {
@@ -801,4 +805,197 @@ function showResult() {
 
   // Save result to leaderboard
   saveQuizResultToLeaderboard();
+  
+  // Add event listener for the view results button
+  const viewResultsBtn = document.getElementById("view-results-btn");
+  if (viewResultsBtn) {
+    viewResultsBtn.onclick = () => {
+      // Store results in sessionStorage for the results page
+      const resultsData = {
+        score: score,
+        totalQuestions: questions.length,
+        correctAnswers: score, // For now, correct answers = score
+        percentage: Math.round((score / questions.length) * 100),
+        questions: questions,
+        userAnswers: userAnswers || [], // Assuming userAnswers array exists
+        category: selectedSubject && subjectInfo[selectedSubject]
+          ? subjectInfo[selectedSubject].name
+          : customQuizMode
+          ? "Custom Quiz"
+          : "Unknown",
+        difficulty: "Medium" // Default difficulty
+      };
+      
+      // Save to sessionStorage
+      sessionStorage.setItem('quizResults', JSON.stringify(resultsData));
+      
+      // Redirect to results page
+      window.location.href = './result.html';
+    };
+  }
+}
+
+
+// Add a global variable to track user answers
+let userAnswers = [];
+
+
+// In the checkAnswer function, add user's answer to the userAnswers array
+function checkAnswer() {
+  // Get selected answer
+  const selected = document.querySelector('input[name="answer"]:checked');
+  if (!selected) return;
+
+  const answerIndex = parseInt(selected.value);
+  const correct = questions[current].answer;
+  
+  // Add user's answer to the array
+  userAnswers[current] = answerIndex;
+
+  // Mark selected answer
+  selected.parentElement.classList.add("selected");
+
+  // Check if answer is correct
+  let isCorrect = false;
+  if (Array.isArray(correct)) {
+    // For checkbox questions
+    isCorrect = correct.includes(answerIndex);
+  } else {
+    // For single choice questions
+    isCorrect = answerIndex === correct;
+  }
+
+  if (isCorrect) {
+    score++;
+    selected.parentElement.classList.add("correct");
+  } else {
+    selected.parentElement.classList.add("incorrect");
+
+    // Highlight correct answer
+    const allLabels = document.querySelectorAll("#quiz-form label");
+    if (Array.isArray(correct)) {
+      correct.forEach(correctIndex => {
+        allLabels[correctIndex].classList.add("correct");
+      });
+    } else {
+      allLabels[correct].classList.add("correct");
+    }
+  }
+
+  // Disable all choices after answering
+  document.querySelectorAll("#quiz-form input").forEach(input => {
+    input.disabled = true;
+  });
+}
+
+// Update the nextQuestion function to reset userAnswers when starting a new quiz
+function nextQuestion() {
+  current++;
+  if (current < questions.length) {
+    loadQuestion();
+  } else {
+    showResult();
+  }
+}
+
+
+// Update the loadQuestion function to reset the userAnswers array when starting a new quiz
+function loadQuestion() {
+  // Reset form and feedback when loading new question
+  document.querySelectorAll("#quiz-form label").forEach(label => {
+    label.classList.remove("correct", "incorrect", "selected");
+  });
+  document.querySelectorAll("#quiz-form input").forEach(input => {
+    input.disabled = false;
+    input.checked = false;
+  });
+  document.querySelector(".correct-answer-popup")?.remove();
+
+  // Update question and answers
+  const q = questions[current];
+  document.getElementById("question-title").textContent = q.question;
+  
+  // Set up choices based on question type
+  let choicesHTML = "";
+  if (q.choices) {
+    q.choices.forEach((choice, index) => {
+      choicesHTML += `
+        <label class="choice-option">
+          <input type="radio" name="answer" value="${index}">
+          ${choice}
+        </label>
+      `;
+    });
+  }
+  document.getElementById("quiz-form").innerHTML = choicesHTML;
+
+  // Update progress
+  const progress = Math.round(((current + 1) / questions.length) * 100);
+  document.getElementById("progress-bar").style.width = `${progress}%`;
+  document.getElementById("progress-bar").textContent = `${progress}%`;
+
+  // Update subject title
+  if (selectedSubject && subjectInfo[selectedSubject]) {
+    document.getElementById("current-subject").textContent = subjectInfo[selectedSubject].name;
+  } else if (customQuizMode) {
+    document.getElementById("current-subject").textContent = "Custom Quiz";
+  }
+
+  // Start timer
+  clearInterval(timer);
+  timeLeft = 20;
+  document.getElementById("time-left").textContent = timeLeft;
+  timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById("time-left").textContent = timeLeft;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      checkAnswer(); // Process as if no answer was selected
+      showFeedback(() => nextQuestion());
+    }
+  }, 1000);
+}
+
+
+// Update the showResult function to reset userAnswers when showing results
+function showResult() {
+  document.getElementById("quiz").classList.remove("active");
+  document.getElementById("result").classList.add("active");
+  document.getElementById("final-score").textContent = `You scored ${score} out of ${questions.length}`;
+
+  document.getElementById("celebration-overlay").style.display = "flex";
+  document.getElementById("celebration-overlay").textContent =
+    score >= 4 ? "🎉 Congratulations!" : "👍 Better Luck Next Time!";
+  setTimeout(() => (document.getElementById("celebration-overlay").style.display = "none"), 3000);
+
+  // Save result to leaderboard
+  saveQuizResultToLeaderboard();
+  
+  // Add event listener for the view results button
+  const viewResultsBtn = document.getElementById("view-results-btn");
+  if (viewResultsBtn) {
+    viewResultsBtn.onclick = () => {
+      // Store results in sessionStorage for the results page
+      const resultsData = {
+        score: score,
+        totalQuestions: questions.length,
+        correctAnswers: score, // For now, correct answers = score
+        percentage: Math.round((score / questions.length) * 100),
+        questions: questions,
+        userAnswers: userAnswers || [], // Use the userAnswers array we've been tracking
+        category: selectedSubject && subjectInfo[selectedSubject]
+          ? subjectInfo[selectedSubject].name
+          : customQuizMode
+          ? "Custom Quiz"
+          : "Unknown",
+        difficulty: "Medium" // Default difficulty
+      };
+      
+      // Save to sessionStorage
+      sessionStorage.setItem('quizResults', JSON.stringify(resultsData));
+      
+      // Redirect to results page
+      window.location.href = './result.html';
+    };
+  }
 }
