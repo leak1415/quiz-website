@@ -1,43 +1,40 @@
 // Global authentication functions needed for the home page
 function isLoggedIn() {
-    let appData = JSON.parse(localStorage.getItem("quizAppData"));
-    if (!appData) {
-        appData = JSON.parse(sessionStorage.getItem("quizAppData"));
-    }
-    return appData && appData.loggedIn === true;
+    // Use unified quizAppData as per project规范
+    const appData = JSON.parse(localStorage.getItem("quizAppData")) || {
+        users: [],
+        leaderboard: [],
+        currentUser: null,
+        loggedIn: false,
+    };
+    return appData.loggedIn === true;
 }
 
 function getUserData() {
-    let userData = localStorage.getItem('quizApp_user');
-    if (!userData) {
-        userData = sessionStorage.getItem('quizApp_user');
-    }
-    try {
-        return userData ? JSON.parse(userData) : null;
-    } catch (e) {
-        console.error('Error parsing user data:', e);
-        return null;
-    }
+    // Use unified quizAppData as per project规范
+    const appData = JSON.parse(localStorage.getItem("quizAppData")) || {
+        users: [],
+        leaderboard: [],
+        currentUser: null,
+        loggedIn: false,
+    };
+    return appData.currentUser;
 }
 
 function logout() {
-    let appData = JSON.parse(localStorage.getItem("quizAppData"));
-    if (appData) {
-        appData.loggedIn = false;
-        appData.currentUser = null;
-        localStorage.setItem("quizAppData", JSON.stringify(appData));
-    }
-
-    let sessionData = JSON.parse(sessionStorage.getItem("quizAppData"));
-    if (sessionData) {
-        sessionData.loggedIn = false;
-        sessionData.currentUser = null;
-        sessionStorage.setItem("quizAppData", JSON.stringify(sessionData));
-    }
-
+    const appData = JSON.parse(localStorage.getItem("quizAppData")) || {
+        users: [],
+        leaderboard: [],
+        currentUser: null,
+        loggedIn: false,
+    };
+    
+    appData.loggedIn = false;
+    appData.currentUser = null;
+    localStorage.setItem("quizAppData", JSON.stringify(appData));
+    
     localStorage.removeItem("quizApp_remember");
-    sessionStorage.removeItem("quizApp_remember");
-    window.location.href = "../index.html";
+    window.location.href = "./index.html";
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -66,77 +63,206 @@ document.addEventListener("DOMContentLoaded", function () {
         const ctaButton = document.getElementById('cta-button');
         if (ctaButton) {
             ctaButton.textContent = 'Sign In to Continue';
-            ctaButton.href = 'auth/login.html';
-            ctaButton.onclick = (e) => {
-                e.preventDefault();
-                window.location.href = 'auth/login.html';
-            };
+
+            // Determine the correct path for login based on current location
+            const currentPath = window.location.pathname;
+            let loginPath = './auth/login.html';
+
+            if (currentPath.includes('/pages/')) {
+                loginPath = '../auth/login.html';
+            } else if (currentPath.includes('/auth/')) {
+                loginPath = './login.html'; // If already in auth directory
+            }
+
+            ctaButton.href = loginPath;
         }
     }
+
+    // Toggle mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const navList = document.getElementById('nav-list');
+
+    if (hamburger && navList) {
+        hamburger.addEventListener('click', () => {
+            navList.classList.toggle('active');
+            const isExpanded = navList.classList.contains('active');
+            hamburger.setAttribute('aria-expanded', isExpanded);
+        });
+    }
+
+    // Toggle dropdown on mobile
+    const dropDown = document.querySelector('.drop-down');
+    const dropContent = document.querySelector('.dropdown-content');
+
+    if (dropDown && dropContent) {
+        dropDown.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                e.preventDefault();
+                dropContent.classList.toggle('active');
+            }
+        });
+    }
+
+    // Highlight active link
+    const currentPath = window.location.pathname.split('/').pop();
+    const links = document.querySelectorAll('.nav-list .nav-link');
+
+    links.forEach(link => {
+        const linkPath = link.getAttribute('href') ? link.getAttribute('href').split('/').pop() : '';
+        // Compare paths, treating empty path as index.html
+        const normalizedCurrentPath = currentPath || 'index.html';
+        const normalizedLinkPath = linkPath || 'index.html';
+        if (normalizedLinkPath === normalizedCurrentPath) {
+            link.classList.add('active');
+        }
+    });
 });
 
-// Update auth section in navbar based on login status
+// Update UI based on authentication status
 function updateAuthUI() {
     const authSection = document.getElementById('auth-section');
     if (!authSection) return;
 
-    authSection.innerHTML = ''; // Clear the section
-
     if (isLoggedIn()) {
-        // User is logged in - show profile and logout
         const userData = getUserData();
-        const profileLink = document.createElement('a');
-        profileLink.href = './pages/profile.html';
-        profileLink.className = 'nav-link';
-        profileLink.textContent = userData && (userData.fullName || userData.name) ? 
-                                  (userData.fullName || userData.name).split(' ')[0] : 'Profile';
-        profileLink.ariaLabel = 'Profile';
 
-        const logoutLink = document.createElement('a');
-        logoutLink.href = '#';
-        logoutLink.className = 'nav-link';
-        logoutLink.textContent = 'Logout';
-        logoutLink.onclick = (e) => {
-            e.preventDefault();
-            logout();
-        };
+        // Determine the correct path prefix based on current page location
+        const currentPath = window.location.pathname;
+        let pathPrefix = '';
 
-        authSection.appendChild(profileLink);
-        authSection.appendChild(logoutLink);
+        if (currentPath.includes('/pages/')) {
+            pathPrefix = '../'; // If we're in the pages directory, go up one level
+        } else if (currentPath.includes('/auth/')) {
+            pathPrefix = '../'; // If we're in the auth directory, go up one level
+        } else {
+            pathPrefix = './'; // If we're in root, stay at current level
+        }
+
+        const userMenu = `
+            <div class="dropdown">
+                <button class="dropbtn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    ${userData?.fullName || userData?.email || 'User'}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="${pathPrefix}pages/profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
+                    <li><a class="dropdown-item" href="${pathPrefix}pages/result.html"><i class="fas fa-trophy me-2"></i>My Results</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="${pathPrefix}auth/logout.html"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
+            </div>
+        `;
+        authSection.innerHTML = userMenu;
+        
+        // If we're on the home page, update the CTA button to reflect logged-in status
+        const ctaButton = document.getElementById('cta-button');
+        if (ctaButton) {
+            ctaButton.textContent = 'Go to Dashboard';
+            ctaButton.href = '#dashboard-section';
+            ctaButton.onclick = function(e) {
+                e.preventDefault();
+                document.getElementById('dashboard-section').scrollIntoView({ behavior: 'smooth' });
+            };
+        }
     } else {
-        // User is not logged in - show login and register
-        const loginLink = document.createElement('a');
-        loginLink.href = './auth/login.html';
-        loginLink.className = 'nav-link';
-        loginLink.textContent = 'Login';
-        loginLink.ariaLabel = 'Login';
+        // Determine the correct path for login based on current location
+        const currentPath = window.location.pathname;
+        let loginPath = './auth/login.html';
 
-        const registerLink = document.createElement('a');
-        registerLink.href = './auth/register.html';
-        registerLink.className = 'nav-link';
-        registerLink.textContent = 'Register';
-        registerLink.ariaLabel = 'Register';
+        if (currentPath.includes('/pages/')) {
+            loginPath = '../auth/login.html';
+        } else if (currentPath.includes('/auth/')) {
+            loginPath = './login.html'; // If already in auth directory
+        }
 
-        authSection.appendChild(loginLink);
-        authSection.appendChild(registerLink);
+        authSection.innerHTML = `<a href="${loginPath}">Login</a>`;
+        
+        // Update CTA button if on home page
+        const ctaButton = document.getElementById('cta-button');
+        if (ctaButton) {
+            ctaButton.textContent = 'Sign In to Continue';
+            ctaButton.href = loginPath;
+        }
     }
 }
 
-// Update dashboard content with user statistics
+// Update dashboard content with user stats
 function updateDashboardContent(userData) {
-    if (!userData) return;
+  // For now, we'll use placeholder data. In a real application, this would come from the server or local storage
+  const quizzesTakenElement = document.getElementById('quizzes-taken');
+  if (quizzesTakenElement) {
+      quizzesTakenElement.textContent = '5';
+  }
 
-    // Update quizzes taken count
-    const quizzesTakenEl = document.getElementById('quizzes-taken');
-    if (quizzesTakenEl) {
-        quizzesTakenEl.textContent = userData.quizzesTaken || 0;
-    }
+  const successRateElement = document.getElementById('success-rate');
+  if (successRateElement) {
+      successRateElement.textContent = '87%';
+  }
 
-    // Update success rate
-    const successRateEl = document.getElementById('success-rate');
-    if (successRateEl) {
-        successRateEl.textContent = `${userData.successRate || '0%'}`;
-    }
+  const rankingElement = document.getElementById('ranking');
+  if (rankingElement) {
+      rankingElement.textContent = '#12';
+  }
+
+  const avgScoreElement = document.getElementById('avg-score');
+  if (avgScoreElement) {
+      avgScoreElement.textContent = '8.4';
+  }
+
+  // Update recent activity
+  const recentActivity = document.getElementById('recent-activity');
+  if (recentActivity) {
+      recentActivity.innerHTML = `
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  JavaScript Quiz
+              </div>
+              <span class="badge bg-primary rounded-pill">85%</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                  <i class="fas fa-check-circle text-success me-2"></i>
+                  HTML & CSS Quiz
+              </div>
+              <span class="badge bg-primary rounded-pill">92%</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                  <i class="fas fa-clock text-warning me-2"></i>
+                  Started: General IT Quiz
+              </div>
+              <span class="badge bg-secondary rounded-pill">In Progress</span>
+          </li>
+      `;
+  }
+
+  // Update continue learning section
+  const continueLearning = document.getElementById('continue-learning');
+  if (continueLearning) {
+      continueLearning.innerHTML = `
+          <a href="quiz.html" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1">Complete: General IT Quiz</h6>
+                  <small>50%</small>
+              </div>
+              <p class="mb-1">Continue where you left off</p>
+          </a>
+          <a href="quiz.html" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1">Advanced JavaScript Quiz</h6>
+                  <small>New</small>
+              </div>
+              <p class="mb-1">Challenge yourself with advanced concepts</p>
+          </a>
+          <a href="quiz.html" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1">Web Security Fundamentals</h6>
+                  <small>Recommended</small>
+              </div>
+              <p class="mb-1">Learn about security best practices</p>
+          </a>
+      `;
+  }
 }
 
 // Function to update user's quiz statistics
@@ -183,134 +309,41 @@ function updateUserStats(quizResult) {
 
 // Persist updated user data to storage
 function persistUserData(updatedUserData) {
-    // Update both localStorage and sessionStorage if user exists in either
-    const localStorageData = JSON.parse(localStorage.getItem("quizAppData")) || { users: [], leaderboard: [] };
-    const sessionStorageData = JSON.parse(sessionStorage.getItem("quizAppData")) || { users: [], leaderboard: [] };
+    // Update the unified quizAppData as per project规范
+    const appData = JSON.parse(localStorage.getItem("quizAppData")) || {
+        users: [],
+        leaderboard: [],
+        currentUser: null,
+        loggedIn: false,
+    };
     
-    // Update in localStorage
-    const localUserIndex = localStorageData.users.findIndex(u => u.id === updatedUserData.id);
-    if (localUserIndex !== -1) {
-        localStorageData.users[localUserIndex] = { ...localStorageData.users[localUserIndex], ...updatedUserData };
+    // Update in users array if user exists
+    const userIndex = appData.users.findIndex(u => u.id === updatedUserData.id);
+    if (userIndex !== -1) {
+        appData.users[userIndex] = { ...appData.users[userIndex], ...updatedUserData };
     } else {
-        localStorageData.users.push(updatedUserData);
+        appData.users.push(updatedUserData);
     }
-    localStorage.setItem("quizAppData", JSON.stringify(localStorageData));
     
-    // Update in sessionStorage
-    const sessionUserIndex = sessionStorageData.users.findIndex(u => u.id === updatedUserData.id);
-    if (sessionUserIndex !== -1) {
-        sessionStorageData.users[sessionUserIndex] = { ...sessionStorageData.users[sessionUserIndex], ...updatedUserData };
-    } else {
-        sessionStorageData.users.push(updatedUserData);
-    }
-    sessionStorage.setItem("quizAppData", JSON.stringify(sessionStorageData));
-    
-    // Also update current user if it's the logged-in user
-    const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
+    // Update current user if it's the logged-in user
     if (appData.currentUser && appData.currentUser.id === updatedUserData.id) {
         appData.currentUser = { ...appData.currentUser, ...updatedUserData };
-        localStorage.setItem("quizAppData", JSON.stringify(appData));
     }
+    
+    localStorage.setItem("quizAppData", JSON.stringify(appData));
 }
 
-// Update dashboard content with user stats
-function updateDashboardContent(userData) {
-  // For now, we'll use placeholder data. In a real application, this would come from the server or local storage
-  document.getElementById("quizzes-taken").textContent = "5";
-  document.getElementById("success-rate").textContent = "87%";
-  document.getElementById("ranking").textContent = "#12";
-  document.getElementById("avg-score").textContent = "8.4";
-
-  // Update recent activity
-  const recentActivity = document.getElementById("recent-activity");
-  if (recentActivity) {
-    recentActivity.innerHTML = `
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <i class="fas fa-check-circle text-success me-2"></i>
-                    JavaScript Quiz
-                </div>
-                <span class="badge bg-primary rounded-pill">85%</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <i class="fas fa-check-circle text-success me-2"></i>
-                    HTML & CSS Quiz
-                </div>
-                <span class="badge bg-primary rounded-pill">92%</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <i class="fas fa-clock text-warning me-2"></i>
-                    Started: General IT Quiz
-                </div>
-                <span class="badge bg-secondary rounded-pill">In Progress</span>
-            </li>
-        `;
-  }
-
-  // Update continue learning section
-  const continueLearning = document.getElementById("continue-learning");
-  if (continueLearning) {
-    continueLearning.innerHTML = `
-            <a href="quiz.html" class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Complete: General IT Quiz</h6>
-                    <small>50%</small>
-                </div>
-                <p class="mb-1">Continue where you left off</p>
-            </a>
-            <a href="quiz.html" class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Advanced JavaScript Quiz</h6>
-                    <small>New</small>
-                </div>
-                <p class="mb-1">Challenge yourself with advanced concepts</p>
-            </a>
-            <a href="quiz.html" class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">Web Security Fundamentals</h6>
-                    <small>Recommended</small>
-                </div>
-                <p class="mb-1">Learn about security best practices</p>
-            </a>
-        `;
-  }
+// Add a function to manually refresh the auth UI when needed
+function refreshAuthUI() {
+    updateAuthUI();
 }
 
-// Toggle mobile menu
-const hamburger = document.getElementById("hamburger");
-const navList = document.getElementById("nav-list");
-
-if (hamburger && navList) {
-  hamburger.addEventListener("click", () => {
-    navList.classList.toggle("active");
-    const isExpanded = navList.classList.contains("active");
-    hamburger.setAttribute("aria-expanded", isExpanded);
-  });
-}
-
-// Toggle dropdown on mobile
-const dropDown = document.querySelector(".drop-down");
-const dropContent = document.querySelector(".dropdown-content");
-
-if (dropDown && dropContent) {
-  dropDown.addEventListener("click", (e) => {
-    if (window.innerWidth <= 768) {
-      e.preventDefault();
-      dropContent.classList.toggle("active");
+// Also add an event listener to handle cases where login happens in another tab/window
+window.addEventListener('storage', function(e) {
+    if (e.key === 'quizAppData') {
+        // The login status may have changed in another tab, refresh the UI
+        updateAuthUI();
     }
-  });
-}
-
-// Highlight active link
-const currentPath = window.location.pathname.split("/").pop();
-const links = document.querySelectorAll(".nav-list .nav-link");
-
-links.forEach((link) => {
-  if (link.getAttribute("href") === currentPath) {
-    link.classList.add("active");
-  }
 });
 
 // Add a function to refresh user session periodically (optional)
@@ -322,17 +355,14 @@ function refreshSession() {
       userData.loginTime = new Date().toISOString();
 
       // Re-save user data
-      let appData = JSON.parse(localStorage.getItem("quizAppData"));
-      if (appData) {
-        appData.currentUser = userData;
-        localStorage.setItem("quizAppData", JSON.stringify(appData));
-      } else {
-        let sessionData = JSON.parse(sessionStorage.getItem("quizAppData"));
-        if (sessionData) {
-          sessionData.currentUser = userData;
-          sessionStorage.setItem("quizAppData", JSON.stringify(sessionData));
-        }
+      const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
+      if (appData.currentUser) {
+          appData.currentUser = userData;
+          localStorage.setItem("quizAppData", JSON.stringify(appData));
       }
     }
   }
 }
+
+// Call refreshSession function periodically to maintain session
+setInterval(refreshSession, 300000); // Refresh every 5 minutes

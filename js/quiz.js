@@ -1,13 +1,3 @@
-// Authentication check functions
-function isLoggedIn() {
-  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
-  return appData && appData.loggedIn === true;
-}
-
-function getUserData() {
-  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
-  return appData && appData.currentUser ? appData.currentUser : null;
-}
 
 // Check if user is logged in when page loads
 document.addEventListener("DOMContentLoaded", function () {
@@ -26,12 +16,12 @@ document.addEventListener("DOMContentLoaded", function () {
     };
   }
 
-  const createQuizBtn = document.getElementById("create-quiz-btn");
-  if (createQuizBtn) {
-    createQuizBtn.onclick = () => {
+  const adminQuizBtn = document.getElementById("admin-quiz-btn");
+  if (adminQuizBtn) {
+    adminQuizBtn.onclick = () => {
       document.getElementById("main-menu").classList.remove("active");
-      document.getElementById("create-quiz").classList.add("active");
-      initializeQuizBuilder();
+      document.getElementById("admin-quiz").classList.add("active");
+      initializeAdminQuizBuilder();
     };
   }
 
@@ -44,10 +34,10 @@ document.addEventListener("DOMContentLoaded", function () {
     };
   }
 
-  const backToMenuBtn2 = document.getElementById("back-to-menu-btn2");
-  if (backToMenuBtn2) {
-    backToMenuBtn2.onclick = () => {
-      document.getElementById("create-quiz").classList.remove("active");
+  const backFromAdminBtn = document.getElementById("back-from-admin-btn");
+  if (backFromAdminBtn) {
+    backFromAdminBtn.onclick = () => {
+      document.getElementById("admin-quiz").classList.remove("active");
       document.getElementById("main-menu").classList.add("active");
     };
   }
@@ -69,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
       questions = JSON.parse(JSON.stringify(quizzes[subject]));
       current = 0;
       score = 0;
+      userAnswers = []; // Reset user answers
       customQuizMode = false;
       document.getElementById("subject-title").textContent = `${info.name} Quiz`;
       document.getElementById("subject-emoji").textContent = info.emoji;
@@ -77,84 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("instructions").classList.add("active");
     };
   });
-
-  // Quiz Builder
-  const addQuestionBtn = document.getElementById("add-question-btn");
-  if (addQuestionBtn) {
-    addQuestionBtn.onclick = () => {
-      addQuestionInput();
-    };
-  }
-
-  const submitCustomQuizBtn = document.getElementById("submit-custom-quiz-btn");
-  if (submitCustomQuizBtn) {
-    submitCustomQuizBtn.onclick = () => {
-      const title = document.getElementById("quiz-title").value || "Custom Quiz";
-      const questionDivs = document.querySelectorAll(".question-input");
-      const customQuestions = [];
-
-      questionDivs.forEach((div) => {
-        const questionText = div.querySelector(".question-text").value;
-        const questionType = div.querySelector(".question-type").value;
-
-        if (!questionText) return; // Skip if no question text
-
-        let questionObj = {
-          question: questionText,
-          type: questionType,
-        };
-
-        if (questionType === "multiple") {
-          // Multiple choice question
-          const choicesInputs = div.querySelectorAll(".choice");
-          const choices = Array.from(choicesInputs).map((input) => input.value);
-          const answer = parseInt(div.querySelector(".answer-select").value);
-
-          if (choices.every((c) => c) && answer !== "") {
-            questionObj.choices = choices;
-            questionObj.answer = answer;
-            customQuestions.push(questionObj);
-          }
-        } else if (questionType === "trueFalse") {
-          // True/False question
-          const answer = div.querySelector(".trueFalse-answer").value;
-
-          if (answer !== "") {
-            questionObj.choices = ["True", "False"];
-            questionObj.answer = answer === "true" ? 0 : 1;
-            customQuestions.push(questionObj);
-          }
-        } else if (questionType === "checkbox") {
-          // Checkbox question (multiple correct answers)
-          const checkboxChoices = div.querySelectorAll(".checkbox-choice");
-          const checkboxCorrects = div.querySelectorAll(".checkbox-correct");
-          const choices = Array.from(checkboxChoices).map((input) => input.value);
-          const correctAnswers = Array.from(checkboxCorrects)
-            .map((checkbox, index) => (checkbox.checked ? index : -1))
-            .filter((i) => i !== -1);
-
-          if (choices.every((c) => c) && correctAnswers.length > 0) {
-            questionObj.choices = choices;
-            questionObj.answer = correctAnswers; // Array of correct answer indices
-            customQuestions.push(questionObj);
-          }
-        }
-      });
-
-      if (customQuestions.length === 0) {
-        alert("Please fill in at least one complete question!");
-        return;
-      }
-
-      questions = customQuestions;
-      current = 0;
-      score = 0;
-      customQuizMode = true;
-      document.getElementById("quiz-description").textContent = `Custom Quiz: ${title}. ${questions.length} questions, 20 seconds each. Good luck!`;
-      document.getElementById("create-quiz").classList.remove("active");
-      document.getElementById("instructions").classList.add("active");
-    };
-  }
 
   // Event listeners for quiz navigation
   const startBtn = document.getElementById("start-btn");
@@ -178,19 +91,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const restartBtn = document.getElementById("restart-btn");
   if (restartBtn) {
     restartBtn.onclick = () => location.reload();
-  }
-
-  const fullscreenBtn = document.getElementById("fullscreen-btn");
-  if (fullscreenBtn) {
-    fullscreenBtn.onclick = () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-        document.getElementById("fullscreen-btn").textContent = "✖ Exit Fullscreen";
-      } else {
-        document.exitFullscreen();
-        document.getElementById("fullscreen-btn").textContent = "⛶ Fullscreen";
-      }
-    };
   }
 });
 
@@ -485,6 +385,7 @@ document.querySelectorAll(".subject-btn").forEach((btn) => {
     questions = JSON.parse(JSON.stringify(quizzes[subject]));
     current = 0;
     score = 0;
+    userAnswers = []; // Reset user answers
     customQuizMode = false;
     $("subject-title").textContent = `${info.name} Quiz`;
     $("subject-emoji").textContent = info.emoji;
@@ -832,6 +733,7 @@ $("admin-submit-quiz-btn").onclick = () => {
   questions = adminQuestions;
   current = 0;
   score = 0;
+  userAnswers = []; // Reset user answers
   customQuizMode = true;
 
   // Set selected subject if it's one of the predefined types
@@ -948,18 +850,25 @@ function checkAnswer() {
       .map((checkbox, index) => (checkbox.checked ? index : -1))
       .filter((i) => i !== -1);
 
+    // Store user's answer for result tracking
+    userAnswers.push(selectedAnswers);
+
     // Sort both arrays to compare
     const correctAnswers = Array.isArray(q.answer) ? q.answer.sort((a, b) => a - b) : [];
-    const userAnswers = selectedAnswers.sort((a, b) => a - b);
+    const userAnswersForComparison = selectedAnswers.sort((a, b) => a - b);
 
     // Check if arrays are equal
-    if (JSON.stringify(userAnswers) === JSON.stringify(correctAnswers)) {
+    if (JSON.stringify(userAnswersForComparison) === JSON.stringify(correctAnswers)) {
       score++;
     }
   } else {
     // For multiple choice and true/false
     const selected = document.querySelector('input[name="question"]:checked');
     const userAnswer = selected ? parseInt(selected.value) : null;
+    
+    // Store user's answer for result tracking
+    userAnswers.push(userAnswer);
+    
     if (userAnswer !== null && userAnswer === q.answer) {
       score++;
     }
@@ -1092,31 +1001,40 @@ function showResult() {
   // Save result to leaderboard
   saveQuizResultToLeaderboard();
   
-  // Add event listener for the view results button
-  const viewResultsBtn = document.getElementById("view-results-btn");
-  if (viewResultsBtn) {
+  // Store results in sessionStorage for the results page
+  const resultsData = {
+    score: score,
+    totalQuestions: questions.length,
+    correctAnswers: score, // For now, correct answers = score
+    percentage: Math.round((score / questions.length) * 100),
+    questions: questions,
+    userAnswers: userAnswers, // Use the userAnswers array we've been tracking
+    category: selectedSubject && subjectInfo[selectedSubject]
+      ? subjectInfo[selectedSubject].name
+      : customQuizMode
+      ? "Custom Quiz"
+      : "Unknown",
+    difficulty: "Medium" // Default difficulty
+  };
+  
+  // Save to sessionStorage
+  sessionStorage.setItem('quizResults', JSON.stringify(resultsData));
+  
+  // Create the view results button if it doesn't exist
+  const resultsContainer = document.querySelector('.results-container');
+  if (resultsContainer && !document.getElementById("view-results-btn")) {
+    const viewResultsBtn = document.createElement('button');
+    viewResultsBtn.id = "view-results-btn";
+    viewResultsBtn.className = "btn btn-primary";
+    viewResultsBtn.textContent = "View Detailed Results";
     viewResultsBtn.onclick = () => {
-      // Store results in sessionStorage for the results page
-      const resultsData = {
-        score: score,
-        totalQuestions: questions.length,
-        correctAnswers: score, // For now, correct answers = score
-        percentage: Math.round((score / questions.length) * 100),
-        questions: questions,
-        userAnswers: userAnswers || [], // Use the userAnswers array we've been tracking
-        category: selectedSubject && subjectInfo[selectedSubject]
-          ? subjectInfo[selectedSubject].name
-          : customQuizMode
-          ? "Custom Quiz"
-          : "Unknown",
-        difficulty: "Medium" // Default difficulty
-      };
-      
-      // Save to sessionStorage
-      sessionStorage.setItem('quizResults', JSON.stringify(resultsData));
-      
-      // Redirect to results page
       window.location.href = './result.html';
     };
+    
+    // Insert after the results-actions div if it exists, otherwise add to results container
+    const resultsActions = document.querySelector('.results-actions');
+    if (resultsActions) {
+      resultsActions.appendChild(viewResultsBtn);
+    }
   }
 }

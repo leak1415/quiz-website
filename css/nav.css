@@ -2,7 +2,8 @@
    Navbar (simple & readable)
    ----------------------------- */
 .navbar {
-    position: fixed; /* Fixed position as per memory requirements - must not change to relative on mobile */
+    /* Fixed position as per memory requirements - must not change to relative on mobile */
+    /* position: fixed;  */
     top: 0;
     left: 0;
     right: 0;

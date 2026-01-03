@@ -1,35 +1,40 @@
 function isLoggedIn() {
-    const loggedIn = localStorage.getItem('quizApp_loggedIn') || sessionStorage.getItem('quizApp_loggedIn');
-    return loggedIn === "true";
+  const appData = JSON.parse(localStorage.getItem("quizAppData"));
+  if (!appData || !appData.loggedIn || !appData.currentUser) {
+    return false;
+  }
+
+  // Check if session has expired (e.g., after 24 hours)
+  const loginTime = new Date(appData.currentUser.loginTime);
+  const now = new Date();
+  const timeDiff = (now - loginTime) / (1000 * 60 * 60); // Difference in hours
+
+  // If more than 24 hours have passed, log out automatically
+  if (timeDiff > 24) {
+    logout();
+    return false;
+  }
+
+  return appData.loggedIn === true;
 }
 
-function checkAuth() {
-    // Define public pages that don't require authentication
-    const currentPath = window.location.pathname.split('/').pop().toLowerCase();
-    const publicPages = ['index.html', 'login.html', 'register.html', ''];
+function logout() {
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
+  appData.loggedIn = false;
+  appData.currentUser = null;
+  localStorage.setItem("quizAppData", JSON.stringify(appData));
+  
+  // Determine the correct path based on current location
+  const currentPath = window.location.pathname;
+  let redirectPath = './auth/login.html'; // Default
 
-    // Check if current page is a public page
-    const isPublicPage = publicPages.some(page => currentPath === page.toLowerCase());
-
-    // If not a public page and user is not logged in, redirect to login
-    if (!isPublicPage && !isLoggedIn()) {
-        // Determine the correct path to the login page based on current location
-        const path = window.location.pathname;
-
-        if (path.includes('/auth/')) {
-            // If we're in the auth directory, we're likely on logout.html
-            window.location.href = './login.html';
-        } else if (path.includes('/pages/')) {
-            // If we're in the pages directory
-            window.location.href = '../auth/login.html';
-        } else {
-            // If we're in the root directory
-            window.location.href = './auth/login.html';
-        }
-    }
+  if (currentPath.includes('/auth/')) {
+      redirectPath = './login.html'; // Already in auth directory
+  } else if (currentPath.includes('/pages/')) {
+      redirectPath = '../auth/login.html'; // From pages directory to auth
+  } else {
+      redirectPath = './auth/login.html'; // From root to auth
+  }
+  
+  window.location.href = redirectPath;
 }
-
-// Run auth check when DOM is loaded
-document.addEventListener('DOMContentLoaded', function () {
-    checkAuth();
-});

@@ -1,8 +1,23 @@
 // Profile page authentication/utility helpers
 function getUser() {
-    let userData = localStorage.getItem('quizApp_user');
-    if (!userData) userData = sessionStorage.getItem('quizApp_user');
-    return userData ? JSON.parse(userData) : null;
+    // According to data storage规范, use unified quizAppData object
+    let appData = JSON.parse(localStorage.getItem("quizAppData")) || {
+        users: [],
+        leaderboard: [],
+        currentUser: null,
+        loggedIn: false,
+    };
+    return appData.currentUser;
+}
+
+function getAppData() {
+    let appData = JSON.parse(localStorage.getItem("quizAppData")) || {
+        users: [],
+        leaderboard: [],
+        currentUser: null,
+        loggedIn: false,
+    };
+    return appData;
 }
 
 function isLoggedIn() {
@@ -30,7 +45,10 @@ if (userNameEl) userNameEl.textContent = user.fullName || user.name || user.emai
 if (userEmailEl) userEmailEl.textContent = user.email || '';
 if (editNameEl) editNameEl.value = user.fullName || user.name || '';
 if (editEmailEl) editEmailEl.value = user.email || '';
-if (userAvatarEl) userAvatarEl.src = user.avatar || '../images/avatar.png';
+if (userAvatarEl) {
+    // Use a fallback image if user.avatar is not available
+    userAvatarEl.src = user.avatar || '../images/image.png'; // Changed from avatar.png to image.png which exists
+}
 
 // Member since
 const memberSinceEl = document.getElementById("member-since");
@@ -162,7 +180,7 @@ if (removeAvatarBtn) {
     removeAvatarBtn.addEventListener('click', function () {
         if (!confirm('Remove profile picture?')) return;
         delete user.avatar;
-        if (userAvatarEl) userAvatarEl.src = '../images/avatar.png';
+        if (userAvatarEl) userAvatarEl.src = '../images/image.png'; // Changed from avatar.png to image.png which exists
         try {
             persistUser();
             alert('Profile picture removed.');

@@ -51,6 +51,30 @@ function displayResults(results) {
         const resultsTitle = document.querySelector('.results-title');
         resultsTitle.textContent = `Quiz Results: ${results.category}`;
     }
+    
+    // Add event listener for the view results button
+    const viewResultsBtn = document.getElementById("view-results-btn");
+    if (viewResultsBtn) {
+        viewResultsBtn.onclick = () => {
+            // Store results in sessionStorage for the results page
+            const resultsData = {
+                score: results.score,
+                totalQuestions: results.totalQuestions,
+                correctAnswers: results.correctAnswers || results.score, // For now, correct answers = score
+                percentage: results.percentage,
+                questions: results.questions,
+                userAnswers: results.userAnswers, // Use the userAnswers array we've been tracking
+                category: results.category || "Unknown",
+                difficulty: results.difficulty || "Medium" // Default difficulty
+            };
+            
+            // Save to sessionStorage
+            sessionStorage.setItem('quizResults', JSON.stringify(resultsData));
+            
+            // Redirect to results page
+            window.location.href = './result.html';
+        };
+    }
 }
 
 function addPerformanceIndicator(percentage) {
@@ -173,4 +197,34 @@ function displayDetailedResults(results) {
         
         detailedResultsContainer.appendChild(questionElement);
     });
+}
+
+// Function to display a message when no results are found
+function displayNoResultsMessage() {
+    const resultsContainer = document.querySelector('.results-container') || document.body;
+    if (resultsContainer) {
+        resultsContainer.innerHTML = `
+            <div class="no-results-message text-center py-5">
+                <h3>No Quiz Results Found</h3>
+                <p class="lead">You haven't completed any quizzes yet.</p>
+                <p class="mb-4">Take a quiz to see your results here!</p>
+                <a href="./quiz.html" class="btn btn-primary btn-lg">Take a Quiz</a>
+            </div>
+        `;
+    }
+}
+
+// Function to display error message if there's an issue parsing results
+function displayErrorMessage() {
+    const resultsContainer = document.querySelector('.results-container') || document.body;
+    if (resultsContainer) {
+        resultsContainer.innerHTML = `
+            <div class="error-message text-center py-5">
+                <h3>Error Loading Results</h3>
+                <p class="lead">There was an issue loading your quiz results.</p>
+                <p class="mb-4">Please try taking the quiz again.</p>
+                <a href="./quiz.html" class="btn btn-primary btn-lg">Try Again</a>
+            </div>
+        `;
+    }
 }
