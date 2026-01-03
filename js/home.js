@@ -212,3 +212,127 @@ function persistUserData(updatedUserData) {
         localStorage.setItem("quizAppData", JSON.stringify(appData));
     }
 }
+
+// Update dashboard content with user stats
+function updateDashboardContent(userData) {
+  // For now, we'll use placeholder data. In a real application, this would come from the server or local storage
+  document.getElementById("quizzes-taken").textContent = "5";
+  document.getElementById("success-rate").textContent = "87%";
+  document.getElementById("ranking").textContent = "#12";
+  document.getElementById("avg-score").textContent = "8.4";
+
+  // Update recent activity
+  const recentActivity = document.getElementById("recent-activity");
+  if (recentActivity) {
+    recentActivity.innerHTML = `
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    JavaScript Quiz
+                </div>
+                <span class="badge bg-primary rounded-pill">85%</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    HTML & CSS Quiz
+                </div>
+                <span class="badge bg-primary rounded-pill">92%</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-clock text-warning me-2"></i>
+                    Started: General IT Quiz
+                </div>
+                <span class="badge bg-secondary rounded-pill">In Progress</span>
+            </li>
+        `;
+  }
+
+  // Update continue learning section
+  const continueLearning = document.getElementById("continue-learning");
+  if (continueLearning) {
+    continueLearning.innerHTML = `
+            <a href="quiz.html" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Complete: General IT Quiz</h6>
+                    <small>50%</small>
+                </div>
+                <p class="mb-1">Continue where you left off</p>
+            </a>
+            <a href="quiz.html" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Advanced JavaScript Quiz</h6>
+                    <small>New</small>
+                </div>
+                <p class="mb-1">Challenge yourself with advanced concepts</p>
+            </a>
+            <a href="quiz.html" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Web Security Fundamentals</h6>
+                    <small>Recommended</small>
+                </div>
+                <p class="mb-1">Learn about security best practices</p>
+            </a>
+        `;
+  }
+}
+
+// Toggle mobile menu
+const hamburger = document.getElementById("hamburger");
+const navList = document.getElementById("nav-list");
+
+if (hamburger && navList) {
+  hamburger.addEventListener("click", () => {
+    navList.classList.toggle("active");
+    const isExpanded = navList.classList.contains("active");
+    hamburger.setAttribute("aria-expanded", isExpanded);
+  });
+}
+
+// Toggle dropdown on mobile
+const dropDown = document.querySelector(".drop-down");
+const dropContent = document.querySelector(".dropdown-content");
+
+if (dropDown && dropContent) {
+  dropDown.addEventListener("click", (e) => {
+    if (window.innerWidth <= 768) {
+      e.preventDefault();
+      dropContent.classList.toggle("active");
+    }
+  });
+}
+
+// Highlight active link
+const currentPath = window.location.pathname.split("/").pop();
+const links = document.querySelectorAll(".nav-list .nav-link");
+
+links.forEach((link) => {
+  if (link.getAttribute("href") === currentPath) {
+    link.classList.add("active");
+  }
+});
+
+// Add a function to refresh user session periodically (optional)
+function refreshSession() {
+  if (isLoggedIn()) {
+    const userData = getUserData();
+    if (userData) {
+      // Update login time
+      userData.loginTime = new Date().toISOString();
+
+      // Re-save user data
+      let appData = JSON.parse(localStorage.getItem("quizAppData"));
+      if (appData) {
+        appData.currentUser = userData;
+        localStorage.setItem("quizAppData", JSON.stringify(appData));
+      } else {
+        let sessionData = JSON.parse(sessionStorage.getItem("quizAppData"));
+        if (sessionData) {
+          sessionData.currentUser = userData;
+          sessionStorage.setItem("quizAppData", JSON.stringify(sessionData));
+        }
+      }
+    }
+  }
+}

@@ -362,6 +362,7 @@ const quizzes = {
     {
       question: "What is the output of: System.out.println(10 + 20);",
       choices: ["Error", "30", "1020", "None"],
+
       answer: 1,
     },
   ],
@@ -411,7 +412,8 @@ let current = 0,
   timeLeft = 20,
   timer,
   customQuizMode = false,
-  selectedSubject = "";
+  selectedSubject = "",
+  adminQuizType = "";
 
 // Add userAnswers array to track user responses
 let userAnswers = [];
@@ -446,8 +448,173 @@ const subjectInfo = {
 
 const $ = (id) => document.getElementById(id);
 
+// Main Menu Navigation
+$("choose-subject-btn").onclick = () => {
+  $("main-menu").classList.remove("active");
+  $("subject-selection").classList.add("active");
+};
+
+$("admin-quiz-btn").onclick = () => {
+  $("main-menu").classList.remove("active");
+  $("admin-quiz").classList.add("active");
+  initializeAdminQuizBuilder();
+};
+
+// Back buttons
+$("back-to-menu-btn").onclick = () => {
+  $("subject-selection").classList.remove("active");
+  $("main-menu").classList.add("active");
+};
+
+$("back-from-admin-btn").onclick = () => {
+  $("admin-quiz").classList.remove("active");
+  $("main-menu").classList.add("active");
+};
+
+$("back-from-instructions").onclick = () => {
+  $("instructions").classList.remove("active");
+  $("main-menu").classList.add("active");
+};
+
+// Subject Selection
+document.querySelectorAll(".subject-btn").forEach((btn) => {
+  btn.onclick = (e) => {
+    const subject = e.target.dataset.subject;
+    selectedSubject = subject;
+    const info = subjectInfo[subject];
+    questions = JSON.parse(JSON.stringify(quizzes[subject]));
+    current = 0;
+    score = 0;
+    customQuizMode = false;
+    $("subject-title").textContent = `${info.name} Quiz`;
+    $("subject-emoji").textContent = info.emoji;
+    $("quiz-description").textContent = `${info.description} This quiz includes ${questions.length} questions. You have 20 seconds per question. Good luck!`;
+    $("subject-selection").classList.remove("active");
+    $("instructions").classList.add("active");
+  };
+});
+
+// Hamburger menu
+$("hamburger").onclick = () => {
+  const navList = $("nav-list");
+  const isExpanded = $("hamburger").getAttribute("aria-expanded") === "true";
+  $("hamburger").setAttribute("aria-expanded", !isExpanded);
+  navList.classList.toggle("active");
+};
+
 // Quiz Builder
 let questionCount = 0;
+let selectedQuestionType = null;
+let adminQuestionCount = 0;
+
+function initializeQuizBuilder() {
+  questionCount = 0;
+  document.getElementById("questions-container").innerHTML = "";
+  document.getElementById("quiz-title").value = "";
+  addQuestionInput();
+}
+
+// Capture admin quiz type selection
+$("admin-quiz-type").onchange = function () {
+  adminQuizType = this.value;
+};
+
+
+function addAdminMultipleChoiceQuestion() {
+  adminQuestionCount++;
+  const questionDiv = document.createElement("div");
+  questionDiv.className = "question-input";
+  questionDiv.id = `admin-question-${adminQuestionCount}`;
+  questionDiv.setAttribute("data-type", "multiple-choice");
+  questionDiv.innerHTML = `
+    <div style="margin-bottom: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 8px; border-left: 4px solid #4CAF50;">
+      <h4>Question ${adminQuestionCount} - Multiple Choice</h4>
+      <input type="text" class="question-text" placeholder="Enter question text" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+      <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Options:</label>
+      <div class="choices">
+        <input type="text" class="choice" placeholder="Choice 1" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+        <input type="text" class="choice" placeholder="Choice 2" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+        <input type="text" class="choice" placeholder="Choice 3" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+        <input type="text" class="choice" placeholder="Choice 4" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+      </div>
+      <label style="display: block; margin-bottom: 0.5rem; margin-top: 0.5rem; font-weight: bold;">Correct Answer:</label>
+      <select class="answer-select" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+        <option value="">Select Correct Answer</option>
+        <option value="0">Choice 1</option>
+        <option value="1">Choice 2</option>
+        <option value="2">Choice 3</option>
+        <option value="3">Choice 4</option>
+      </select>
+      <button type="button" class="btn secondary" style="margin-top: 0.5rem; width: 100%;" onclick="removeAdminQuestion('admin-question-${adminQuestionCount}')">Remove</button>
+    </div>
+  `;
+  $("admin-questions-container").appendChild(questionDiv);
+}
+
+function addAdminTrueFalseQuestion() {
+  adminQuestionCount++;
+  const questionDiv = document.createElement("div");
+  questionDiv.className = "question-input";
+  questionDiv.id = `admin-question-${adminQuestionCount}`;
+  questionDiv.setAttribute("data-type", "true-false");
+  questionDiv.innerHTML = `
+    <div style="margin-bottom: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 8px; border-left: 4px solid #2196F3;">
+      <h4>Question ${adminQuestionCount} - True/False</h4>
+      <input type="text" class="question-text" placeholder="Enter question text" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+      <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Correct Answer:</label>
+      <select class="answer-select" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+        <option value="">Select Answer</option>
+        <option value="0">True</option>
+        <option value="1">False</option>
+      </select>
+      <button type="button" class="btn secondary" style="margin-top: 0.5rem; width: 100%;" onclick="removeAdminQuestion('admin-question-${adminQuestionCount}')">Remove</button>
+    </div>
+  `;
+  $("admin-questions-container").appendChild(questionDiv);
+}
+
+
+function addAdminCheckboxQuestion() {
+  adminQuestionCount++;
+  const questionDiv = document.createElement("div");
+  questionDiv.className = "question-input";
+  questionDiv.id = `admin-question-${adminQuestionCount}`;
+  questionDiv.setAttribute("data-type", "checkbox");
+  questionDiv.innerHTML = `
+    <div style="margin-bottom: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 8px; border-left: 4px solid #FF9800;">
+      <h4>Question ${adminQuestionCount} - Checkbox (Multiple Correct)</h4>
+      <input type="text" class="question-text" placeholder="Enter question text" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+      <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Options (check all that apply):</label>
+      <div class="choices">
+        <div style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <input type="text" class="choice" placeholder="Option 1" style="flex: 1; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+          <label style="margin: 0; font-weight: normal;"><input type="checkbox" class="answer-checkbox" value="0"> Correct</label>
+        </div>
+        <div style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <input type="text" class="choice" placeholder="Option 2" style="flex: 1; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+          <label style="margin: 0; font-weight: normal;"><input type="checkbox" class="answer-checkbox" value="1"> Correct</label>
+        </div>
+        <div style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <input type="text" class="choice" placeholder="Option 3" style="flex: 1; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+          <label style="margin: 0; font-weight: normal;"><input type="checkbox" class="answer-checkbox" value="2"> Correct</label>
+        </div>
+        <div style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <input type="text" class="choice" placeholder="Option 4" style="flex: 1; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+          <label style="margin: 0; font-weight: normal;"><input type="checkbox" class="answer-checkbox" value="3"> Correct</label>
+        </div>
+      </div>
+      <button type="button" class="btn secondary" style="margin-top: 0.5rem; width: 100%;" onclick="removeAdminQuestion('admin-question-${adminQuestionCount}')">Remove</button>
+    </div>
+  `;
+  $("admin-questions-container").appendChild(questionDiv);
+}
+
+function removeAdminQuestion(id) {
+  const element = $(id);
+  if (element) {
+    element.remove();
+  }
+}
 
 function initializeQuizBuilder() {
   questionCount = 0;
@@ -459,7 +626,6 @@ function initializeQuizBuilder() {
 function addQuestionInput() {
   questionCount++;
   const questionDiv = document.createElement("div");
-  questionDiv.className = "question-input";
   questionDiv.id = `question-${questionCount}`;
 
   const questionHTML = `
@@ -576,6 +742,134 @@ function removeQuestion(id) {
   }
 }
 
+$("admin-add-question-btn").onclick = () => {
+  const questionType = $("admin-question-type-select").value;
+
+  if (!questionType) {
+    alert("Please select a question type");
+    return;
+  }
+
+  if (questionType === "mc") {
+    addAdminMultipleChoiceQuestion();
+  } else if (questionType === "tf") {
+    addAdminTrueFalseQuestion();
+  } else if (questionType === "checkbox") {
+    addAdminCheckboxQuestion();
+  }
+
+  $("admin-question-type-select").value = "";
+};
+
+$("admin-submit-quiz-btn").onclick = () => {
+  const title = $("admin-quiz-title").value || "Admin Quiz";
+  const quizType = adminQuizType || "custom";
+  const questionDivs = document.querySelectorAll(
+    "#admin-questions-container .question-input"
+  );
+  const adminQuestions = [];
+
+  questionDivs.forEach((div) => {
+    const questionType = div.getAttribute("data-type");
+    const questionText = div.querySelector(".question-text").value;
+
+    if (!questionText) return;
+
+    if (questionType === "multiple-choice") {
+      const choicesInputs = div.querySelectorAll(".choice");
+      const choices = Array.from(choicesInputs)
+        .map((input) => input.value)
+        .filter((c) => c);
+      const answer = parseInt(div.querySelector(".answer-select").value);
+
+
+      if (choices.length >= 2 && answer !== "" && !isNaN(answer)) {
+        adminQuestions.push({
+          question: questionText,
+          type: "multiple-choice",
+          choices: choices,
+          answer: answer,
+        });
+      }
+    } else if (questionType === "true-false") {
+      const answer = parseInt(div.querySelector(".answer-select").value);
+      const answers = ["True", "False"];
+
+      if (answer !== "" && !isNaN(answer)) {
+        adminQuestions.push({
+          question: questionText,
+          type: "true-false",
+          choices: answers,
+          answer: answer,
+        });
+      }
+    } else if (questionType === "checkbox") {
+      const choicesInputs = div.querySelectorAll(".choice");
+      const choices = Array.from(choicesInputs)
+        .map((input) => input.value)
+        .filter((c) => c);
+      const checkboxes = div.querySelectorAll(".answer-checkbox");
+      const correctAnswers = Array.from(checkboxes)
+        .map((cb, idx) => (cb.checked ? idx : null))
+        .filter((idx) => idx !== null);
+
+      if (choices.length >= 2 && correctAnswers.length > 0) {
+        adminQuestions.push({
+          question: questionText,
+          type: "checkbox",
+          choices: choices,
+          answer: correctAnswers,
+        });
+      }
+    }
+  });
+
+  if (adminQuestions.length === 0) {
+    alert("Please add at least one valid question");
+    return;
+  }
+
+  questions = adminQuestions;
+  current = 0;
+  score = 0;
+  customQuizMode = true;
+
+  // Set selected subject if it's one of the predefined types
+  if (quizType !== "custom" && subjectInfo[quizType]) {
+    selectedSubject = quizType;
+    const info = subjectInfo[quizType];
+    $("subject-title").textContent = `${info.name} Quiz`;
+    $("subject-emoji").textContent = info.emoji;
+  } else {
+    selectedSubject = "";
+    $("subject-title").textContent = `${title}`;
+    $("subject-emoji").textContent = "📝";
+  }
+
+  $("quiz-description").textContent = `Custom Quiz: ${title}. ${questions.length} questions, 20 seconds each. Good luck!`;
+
+  $("admin-quiz").classList.remove("active");
+  $("instructions").classList.add("active");
+
+  // Reset the quiz type selector
+  adminQuizType = "";
+  $("admin-quiz-type").value = "";
+};
+
+$("start-btn").onclick = () => {
+  $("instructions").classList.remove("active");
+  $("quiz").classList.add("active");
+  loadQuestion();
+};
+
+$("next-btn").onclick = () => {
+  clearInterval(timer);
+  checkAnswer();
+  showFeedback(() => nextQuestion());
+};
+
+$("restart-btn").onclick = () => location.reload();
+
 function loadQuestion() {
   timeLeft = 20;
   document.getElementById("time-left").textContent = timeLeft;
@@ -655,9 +949,7 @@ function checkAnswer() {
       .filter((i) => i !== -1);
 
     // Sort both arrays to compare
-    const correctAnswers = Array.isArray(q.answer)
-      ? q.answer.sort((a, b) => a - b)
-      : [];
+    const correctAnswers = Array.isArray(q.answer) ? q.answer.sort((a, b) => a - b) : [];
     const userAnswers = selectedAnswers.sort((a, b) => a - b);
 
     // Check if arrays are equal
@@ -787,171 +1079,6 @@ function saveQuizResultToLeaderboard() {
   localStorage.setItem("quizAppData", JSON.stringify(appData));
 }
 
-function showResult() {
-  document.getElementById("quiz").classList.remove("active");
-  document.getElementById("result").classList.add("active");
-  document.getElementById("final-score").textContent = `You scored ${score} out of ${questions.length}`;
-
-  document.getElementById("celebration-overlay").style.display = "flex";
-  document.getElementById("celebration-overlay").textContent =
-    score >= 4 ? "🎉 Congratulations!" : "👍 Better Luck Next Time!";
-  setTimeout(() => (document.getElementById("celebration-overlay").style.display = "none"), 3000);
-
-  // Save result to leaderboard
-  saveQuizResultToLeaderboard();
-  
-  // Add event listener for the view results button
-  const viewResultsBtn = document.getElementById("view-results-btn");
-  if (viewResultsBtn) {
-    viewResultsBtn.onclick = () => {
-      // Store results in sessionStorage for the results page
-      const resultsData = {
-        score: score,
-        totalQuestions: questions.length,
-        correctAnswers: score, // For now, correct answers = score
-        percentage: Math.round((score / questions.length) * 100),
-        questions: questions,
-        userAnswers: userAnswers || [], // Assuming userAnswers array exists
-        category: selectedSubject && subjectInfo[selectedSubject]
-          ? subjectInfo[selectedSubject].name
-          : customQuizMode
-          ? "Custom Quiz"
-          : "Unknown",
-        difficulty: "Medium" // Default difficulty
-      };
-      
-      // Save to sessionStorage
-      sessionStorage.setItem('quizResults', JSON.stringify(resultsData));
-      
-      // Redirect to results page
-      window.location.href = './result.html';
-    };
-  }
-}
-
-
-// Add a global variable to track user answers
-let userAnswers = [];
-
-
-// In the checkAnswer function, add user's answer to the userAnswers array
-function checkAnswer() {
-  // Get selected answer
-  const selected = document.querySelector('input[name="answer"]:checked');
-  if (!selected) return;
-
-  const answerIndex = parseInt(selected.value);
-  const correct = questions[current].answer;
-  
-  // Add user's answer to the array
-  userAnswers[current] = answerIndex;
-
-  // Mark selected answer
-  selected.parentElement.classList.add("selected");
-
-  // Check if answer is correct
-  let isCorrect = false;
-  if (Array.isArray(correct)) {
-    // For checkbox questions
-    isCorrect = correct.includes(answerIndex);
-  } else {
-    // For single choice questions
-    isCorrect = answerIndex === correct;
-  }
-
-  if (isCorrect) {
-    score++;
-    selected.parentElement.classList.add("correct");
-  } else {
-    selected.parentElement.classList.add("incorrect");
-
-    // Highlight correct answer
-    const allLabels = document.querySelectorAll("#quiz-form label");
-    if (Array.isArray(correct)) {
-      correct.forEach(correctIndex => {
-        allLabels[correctIndex].classList.add("correct");
-      });
-    } else {
-      allLabels[correct].classList.add("correct");
-    }
-  }
-
-  // Disable all choices after answering
-  document.querySelectorAll("#quiz-form input").forEach(input => {
-    input.disabled = true;
-  });
-}
-
-// Update the nextQuestion function to reset userAnswers when starting a new quiz
-function nextQuestion() {
-  current++;
-  if (current < questions.length) {
-    loadQuestion();
-  } else {
-    showResult();
-  }
-}
-
-
-// Update the loadQuestion function to reset the userAnswers array when starting a new quiz
-function loadQuestion() {
-  // Reset form and feedback when loading new question
-  document.querySelectorAll("#quiz-form label").forEach(label => {
-    label.classList.remove("correct", "incorrect", "selected");
-  });
-  document.querySelectorAll("#quiz-form input").forEach(input => {
-    input.disabled = false;
-    input.checked = false;
-  });
-  document.querySelector(".correct-answer-popup")?.remove();
-
-  // Update question and answers
-  const q = questions[current];
-  document.getElementById("question-title").textContent = q.question;
-  
-  // Set up choices based on question type
-  let choicesHTML = "";
-  if (q.choices) {
-    q.choices.forEach((choice, index) => {
-      choicesHTML += `
-        <label class="choice-option">
-          <input type="radio" name="answer" value="${index}">
-          ${choice}
-        </label>
-      `;
-    });
-  }
-  document.getElementById("quiz-form").innerHTML = choicesHTML;
-
-  // Update progress
-  const progress = Math.round(((current + 1) / questions.length) * 100);
-  document.getElementById("progress-bar").style.width = `${progress}%`;
-  document.getElementById("progress-bar").textContent = `${progress}%`;
-
-  // Update subject title
-  if (selectedSubject && subjectInfo[selectedSubject]) {
-    document.getElementById("current-subject").textContent = subjectInfo[selectedSubject].name;
-  } else if (customQuizMode) {
-    document.getElementById("current-subject").textContent = "Custom Quiz";
-  }
-
-  // Start timer
-  clearInterval(timer);
-  timeLeft = 20;
-  document.getElementById("time-left").textContent = timeLeft;
-  timer = setInterval(() => {
-    timeLeft--;
-    document.getElementById("time-left").textContent = timeLeft;
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      checkAnswer(); // Process as if no answer was selected
-      showFeedback(() => nextQuestion());
-    }
-  }, 1000);
-}
-
-
-// Update the showResult function to reset userAnswers when showing results
 function showResult() {
   document.getElementById("quiz").classList.remove("active");
   document.getElementById("result").classList.add("active");

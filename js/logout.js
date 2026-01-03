@@ -46,11 +46,17 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function isLoggedIn() {
-  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
+  let appData = JSON.parse(localStorage.getItem("quizAppData"));
+  if (!appData) {
+    appData = JSON.parse(sessionStorage.getItem("quizAppData"));
+  }
   return appData && appData.loggedIn === true;
 }
 
 function getUserData() {
-  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
+  let appData = JSON.parse(localStorage.getItem("quizAppData"));
+  if (!appData) {
+    appData = JSON.parse(sessionStorage.getItem("quizAppData"));
+  }
   return appData && appData.currentUser ? appData.currentUser : null;
 }
