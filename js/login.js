@@ -21,6 +21,7 @@ function login(event) {
     users: [],
     leaderboard: [],
     currentUser: null,
+    loggedIn: false,
   };
 
   const users = appData.users || [];
@@ -45,13 +46,8 @@ function login(event) {
   appData.currentUser = loginData;
   appData.loggedIn = true;
 
-  if (remember) {
-    localStorage.setItem("quizAppData", JSON.stringify(appData));
-    localStorage.setItem("quizApp_remember", "true");
-  } else {
-    sessionStorage.setItem("quizAppData", JSON.stringify(appData));
-    sessionStorage.setItem("quizApp_remember", "false");
-  }
+  // Always persist to localStorage (single source of truth)
+  localStorage.setItem("quizAppData", JSON.stringify(appData));
 
   // Show success message and redirect
   alert("Login successful!");
@@ -59,26 +55,22 @@ function login(event) {
 }
 
 function isLoggedIn() {
-  let appData = JSON.parse(localStorage.getItem("quizAppData"));
-  if (!appData) {
-    appData = JSON.parse(sessionStorage.getItem("quizAppData"));
-  }
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
   return appData && appData.loggedIn === true;
 }
 
 function getUserData() {
-  let appData = JSON.parse(localStorage.getItem("quizAppData"));
-  if (!appData) {
-    appData = JSON.parse(sessionStorage.getItem("quizAppData"));
-  }
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
   return appData && appData.currentUser ? appData.currentUser : null;
 }
 
 function logout() {
-  localStorage.removeItem("quizApp_user");
-  localStorage.removeItem("quizApp_loggedIn");
-  sessionStorage.removeItem("quizApp_user");
-  sessionStorage.removeItem("quizApp_loggedIn");
+  // Clear login state in unified storage
+  const appData = JSON.parse(localStorage.getItem("quizAppData")) || {};
+  appData.loggedIn = false;
+  appData.currentUser = null;
+  localStorage.setItem("quizAppData", JSON.stringify(appData));
+  localStorage.removeItem("quizApp_remember");
   window.location.href = "auth/login.html";
 }
 
