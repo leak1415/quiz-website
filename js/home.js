@@ -87,21 +87,56 @@ document.addEventListener("DOMContentLoaded", function () {
             navList.classList.toggle('active');
             const isExpanded = navList.classList.contains('active');
             hamburger.setAttribute('aria-expanded', isExpanded);
+            hamburger.classList.toggle('active', isExpanded);
         });
     }
 
-    // Toggle dropdown on mobile
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        if (navList && !navList.contains(event.target) && !hamburger.contains(event.target)) {
+            navList.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            hamburger.classList.remove('active');
+        }
+    });
+
+    // Handle dropdown for both desktop and mobile
     const dropDown = document.querySelector('.drop-down');
+    const dropBtn = document.querySelector('.dropbtn');
     const dropContent = document.querySelector('.dropdown-content');
 
-    if (dropDown && dropContent) {
-        dropDown.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768) {
-                e.preventDefault();
-                dropContent.classList.toggle('active');
+    if (dropDown && dropBtn && dropContent) {
+        // Toggle dropdown on mobile
+        dropBtn.addEventListener('click', function(e) {
+            if (window.innerWidth <= 992) {
+                e.preventDefault(); // Prevent default only on mobile for the button itself
+                dropContent.classList.toggle('show');
             }
+            // On desktop, let CSS hover handle it
+        });
+        
+        // Handle clicks on the dropdown links specifically
+        const dropdownLinks = dropContent.querySelectorAll('a');
+        dropdownLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (window.innerWidth <= 992) {
+                    // On mobile, close the dropdown after a short delay to allow navigation
+                    setTimeout(() => {
+                        dropContent.classList.remove('show');
+                    }, 150);
+                }
+            });
         });
     }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (dropDown && !dropDown.contains(event.target)) {
+            if (dropContent) {
+                dropContent.classList.remove('show');
+            }
+        }
+    });
 
     // Highlight active link
     const currentPath = window.location.pathname.split('/').pop();
@@ -116,8 +151,23 @@ document.addEventListener("DOMContentLoaded", function () {
             link.classList.add('active');
         }
     });
-});
 
+    // Navbar scroll effect
+    let lastScrollTop = 0;
+    const navbar = document.querySelector('.navbar');
+
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollTop > 100) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+        
+        lastScrollTop = scrollTop;
+    });
+});
 // Update UI based on authentication status
 function updateAuthUI() {
     const authSection = document.getElementById('auth-section');

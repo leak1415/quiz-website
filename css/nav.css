@@ -129,7 +129,8 @@ nav {
 
 /* Remove the profile-navbar specific styles since we're using a unified navbar */
 .profile-navbar {
-    display: none; /* This class is not needed with the unified navbar */
+    display: none;
+    /* This class is not needed with the unified navbar */
 }
 
 /* Responsive adjustments for navigation */
@@ -154,12 +155,12 @@ nav {
     .nav-list.active {
         display: flex;
     }
-    
+
     .navbar .nav-list {
         gap: 0;
         flex-direction: column;
     }
-    
+
     .navbar .nav-list li a {
         padding: 12px 20px;
         display: block;
@@ -170,15 +171,15 @@ nav {
     .navbar {
         padding: 10px 15px;
     }
-    
+
     .navbar .logo img {
         width: 60px;
     }
-    
+
     .navbar .logo p {
         font-size: 20px;
     }
-    
+
     .hamburger {
         font-size: 22px;
         padding: 8px;
@@ -189,15 +190,15 @@ nav {
     .navbar {
         padding: 8px 10px;
     }
-    
+
     .navbar .logo img {
         width: 50px;
     }
-    
+
     .navbar .logo p {
         font-size: 18px;
     }
-    
+
     .hamburger {
         font-size: 20px;
         padding: 6px;
