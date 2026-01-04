@@ -294,10 +294,10 @@
     }
     
     .subject-btn {
-        padding: 2.5rem 2rem;
+        padding: 24px;
         font-size: var(--font-size-lg);
         font-weight: var(--font-weight-semibold);
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        background: var(--secondary-dark);
         color: white;
         border: none;
         border-radius: var(--border-radius);
@@ -312,7 +312,6 @@
         position: relative;
         overflow: hidden;
         z-index: 1;
-        min-height: 180px;
         text-align: center;
     }
     
@@ -328,15 +327,53 @@
         opacity: 0;
         transition: opacity 0.3s ease;
     }
-    
+    #back-to-menu-btn{
+        background: var(--secondary-light);
+        color: white;
+    }
+    #start-btn{
+        background: var(--success-dark);
+        color: white;
+    }
+    #back-from-instructions{
+        background: var(--secondary-light);
+        color: white;
+    }
+    #admin-submit-quiz-btn{
+        background: var(--success);
+        color: white;
+    }
+    #back-from-admin-btn{
+        background: var(--secondary);
+        color: white;
+    }
+    #next-btn{
+        background: var(--secondary-light);
+        color: white;
+    }
+    #restart-btn{
+        background: var(--secondary-light);
+        color: white;
+    }
     .subject-btn:hover::before {
         opacity: 0.3;
     }
-    
+    #admin-add-question-btn{
+        background: var(--secondary-light);
+        color: white;
+    }
+    #choose-subject-btn{
+        background: var(--success-dark);
+        color: white;
+    }
+    #admin-quiz-btn{
+        background: var(--secondary-light);
+        color: white;
+    }
     .subject-btn:hover {
         transform: scale(1.05) translateY(-5px);
         box-shadow: var(--box-shadow-lg);
-        background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
+        /* background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark)); */
     }
     
     .subject-btn:active {
